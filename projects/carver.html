@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Carver Trend Following | Angad Bhatti</title>
-  <meta name="description" content="Research website of Angad Bhatti.">
-  <link rel="stylesheet" href="../style.css">
+  <title>Carver Futures Strategy | Angad Bhatti</title>
+  <meta name="description" content="Systematic futures strategy implementation based on Robert Carver's framework.">
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
 
@@ -22,7 +22,134 @@
   </div>
 </header>
 
-<main class='container article-layout'><section class='page-title'><div class='kicker'>Project</div><h1>Carver Trend Following</h1></section><article class='article'><p>Implementation of risk-targeted systematic futures strategies with walk-forward testing across diversified markets. Add GitHub link, presentation, performance summary, and caveats.</p><a class='small-link' href='/projects/'>Back to projects</a></article></main>
+<main>
+  <section class="page-title">
+    <div class="container">
+      <div class="kicker">Systematic Futures · Volatility Targeting · Trend Following</div>
+      <h1>Carver Futures Strategy Replication</h1>
+      <p class="lead">
+        A systematic futures implementation inspired by Robert Carver's framework, focused on volatility targeting,
+        diversification, risk parity, and trend-following overlays.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container article-layout">
+      <article class="article">
+
+        <h2>Objective</h2>
+        <p>
+          The project implements a diversified systematic futures strategy across equities, bonds, and commodities.
+          The goal was not just to maximize return, but to understand how volatility estimation, position sizing,
+          diversification, and trend filters affect Sharpe, drawdowns, and tail behavior.
+        </p>
+
+        <h2>Core implementation</h2>
+        <ul>
+          <li>Back-adjusted continuous futures using the Panama method to avoid treating roll gaps, dividends, and interest effects as trading losses.</li>
+          <li>Volatility-scaled positions using EWMA volatility estimates rather than equal-weighted rolling windows.</li>
+          <li>Blended short- and long-horizon volatility/covariance estimates to avoid overreacting to short-term spikes.</li>
+          <li>Portfolio-level risk parity and leverage based on total risk appetite versus single-contract risk.</li>
+          <li>MACD-based trend overlay used primarily to reduce or close long exposure rather than force aggressive shorts.</li>
+        </ul>
+
+        <h2>Key reasoning</h2>
+        <p>
+          The main lesson was that risk management and sizing mattered more than raw signal accuracy. EWMA volatility
+          avoids artificial jumps caused when a large old return drops out of an equal-weighted window. Short-term
+          volatility clusters, but longer-run volatility mean reverts, so a blended volatility estimate gives smoother
+          sizing across regimes.
+        </p>
+        <p>
+          I also treated high Sharpe as more important than high raw return because a higher-Sharpe strategy can be
+          levered more safely. Signal strength sizing can help, but extreme indicator values need caps or scaling to
+          prevent large positions near reversal points.
+        </p>
+
+        <h2>Trend overlay</h2>
+        <p>
+          The trend module uses exponentially weighted moving averages to construct a MACD-style signal. Positive
+          trend values indicate upward trend, negative values indicate downward trend, and the mask can be multiplied
+          into raw position weights to reduce exposure in contra-trend regimes.
+        </p>
+
+        <h2>20-year backtest results</h2>
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>Target</th>
+              <th>Total Return</th>
+              <th>CAGR</th>
+              <th>Volatility</th>
+              <th>Sharpe</th>
+              <th>Max DD</th>
+              <th>Trades</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Higher vol target</td>
+              <td>19.69×</td>
+              <td>15.93%</td>
+              <td>21.91%</td>
+              <td>0.784</td>
+              <td>-51.5%</td>
+              <td>2,549</td>
+            </tr>
+            <tr>
+              <td>Lower vol target</td>
+              <td>6.38×</td>
+              <td>10.24%</td>
+              <td>14.15%</td>
+              <td>0.760</td>
+              <td>-38.0%</td>
+              <td>1,632</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>Interpretation</h2>
+        <p>
+          Higher volatility targets increased CAGR and total return, but also increased drawdowns and trading frequency.
+          The Sharpe ratio stayed broadly stable across targets, suggesting that the main trade-off was leverage and
+          risk tolerance rather than a radically different source of alpha.
+        </p>
+
+        <h2>MACD mask diagnostic</h2>
+        <p>
+          A regression of the MACD overlay's monthly returns against the baseline volatility-sizing strategy found
+          monthly alpha of roughly 0.0504%, annualized to about 0.61%, with a t-statistic of 1.24 and p-value of 0.2134.
+          The beta was about 0.98 and R² about 0.988, implying the overlay mostly tracked the volatility-sizing baseline.
+          I therefore treat the MACD mask as a marginal risk-control adjustment rather than a strong standalone alpha source.
+        </p>
+
+        <h2>Risk diagnostics</h2>
+        <ul>
+          <li>Return distribution was fat-tailed, with excess kurtosis around 7.23.</li>
+          <li>Daily skewness was mildly positive at about 0.255.</li>
+          <li>Annualized Sortino was about 1.128, higher than Sharpe, suggesting downside risk was better controlled than total volatility alone suggests.</li>
+          <li>Hit rate was about 54%, with average up and down days of similar magnitude.</li>
+          <li>Jarque-Bera rejected normality, so tail metrics are more informative than assuming Gaussian returns.</li>
+        </ul>
+
+        <h2>What I learned</h2>
+        <p>
+          The strongest takeaway was that systematic trading performance depends heavily on stable risk estimation,
+          position sizing, and regime-aware interpretation. Selecting a strategy purely because it won a backtest is
+          dangerous; the result needs a financial explanation. If an improvement cannot be explained economically,
+          it is likely data mining even if the backtest looks statistically attractive.
+        </p>
+
+        <h2>Links</h2>
+        <div class="actions">
+          <a class="small-link" href="https://github.com/Abhatti-123123/carver" target="_blank">GitHub Repository →</a>
+        </div>
+
+      </article>
+    </div>
+  </section>
+</main>
 
 <footer class="footer">
   <div class="container">
