@@ -210,3 +210,45 @@ h3{font-size:20px;margin:0 0 8px;letter-spacing:-.015em}
 .results-table tr:last-child td {
   background: #fafafa;
 }
+
+.research-figure {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.research-figure img {
+  max-width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.research-figure figcaption {
+  margin-top: 0.75rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.qq-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.qq-grid img {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.figure-note {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+@media (max-width: 860px) {
+  .qq-grid {
+    grid-template-columns: 1fr;
+  }
+}

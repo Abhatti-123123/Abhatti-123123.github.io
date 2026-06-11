@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Risk-Scaled Crypto Trend Portfolio | Angad Bhatti</title>
+  <meta name="description" content="Carver-style risk-scaled crypto trend portfolio using volatility scaling, covariance adjustment, trend overlays, and transaction-cost-aware backtesting.">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="/">Angad<span>Bhatti</span></a>
+    <nav class="links">
+      <a href="/research/">Research</a>
+      <a href="/projects/">Projects</a>
+      <a href="/blog/">Blog</a>
+      <a href="/cv/">CV</a>
+      <a href="mailto:ab130@fordham.edu">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="page-title">
+    <div class="container">
+      <div class="kicker">Crypto · Risk Scaling · Trend Following</div>
+      <h1>Risk-Scaled Crypto Trend Portfolio</h1>
+      <p class="lead">
+        A Carver-style multi-asset crypto trend strategy using volatility scaling, covariance adjustment,
+        trend overlays, and transaction-cost-aware portfolio backtesting.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container article-layout">
+      <article class="article">
+
+        <h2>Objective</h2>
+        <p>
+          This project extends Carver-style risk management ideas to a basket of liquid cryptocurrencies.
+          The focus is not simply on finding a trend signal, but on building a controlled portfolio process:
+          scale positions by volatility, account for cross-asset covariance, include transaction costs, and
+          monitor whether drawdowns remain within the intended risk envelope.
+        </p>
+
+        <h2>Strategy design</h2>
+        <ul>
+          <li><strong>Trade 1:</strong> risk-scaled buy-and-hold baseline with constant annualized volatility targeting.</li>
+          <li><strong>Trade 2:</strong> variable risk-scaled buy-and-hold where the risk target changes with fast and slow EWMA volatility.</li>
+          <li><strong>Trade 3:</strong> portfolio risk-scaled crypto trend strategy across liquid crypto assets.</li>
+        </ul>
+
+        <p>
+          Trade 3 is the main portfolio implementation. Positions are first scaled by per-asset volatility,
+          then rescaled using a blended short/long lookback covariance matrix to hit a fixed portfolio volatility
+          target. A trend overlay concentrates exposure in assets with positive trend signals.
+        </p>
+
+        <h2>Transaction-cost and Sharpe convention</h2>
+        <p>
+          Reported results include a transaction cost of 5 basis points per executed trade. This is important because
+          trend-following systems can look artificially strong if turnover is ignored. I report Sharpe using daily returns
+          and a 0% risk-free rate convention, consistent with collateralized futures-style trading where posted margin
+          is assumed to earn the prevailing risk-free rate.
+        </p>
+
+        <h2>Full-sample results</h2>
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Total return</td><td>+127.6%</td></tr>
+            <tr><td>Final equity</td><td>≈ 2.28×</td></tr>
+            <tr><td>CAGR</td><td>21.6%</td></tr>
+            <tr><td>Annualized volatility</td><td>19.1%</td></tr>
+            <tr><td>Sharpe ratio</td><td>1.12</td></tr>
+            <tr><td>Maximum drawdown</td><td>-18.5%</td></tr>
+            <tr><td>Total trades</td><td>89</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Return distribution and risk diagnostics</h2>
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>Statistic</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Mean daily return</td><td>0.000848</td></tr>
+            <tr><td>Daily standard deviation</td><td>0.012046</td></tr>
+            <tr><td>Skewness</td><td>0.515</td></tr>
+            <tr><td>Excess kurtosis</td><td>8.17</td></tr>
+            <tr><td>VaR95 / VaR99</td><td>-1.74% / -3.47%</td></tr>
+            <tr><td>CVaR95 / CVaR99</td><td>-2.77% / -4.31%</td></tr>
+            <tr><td>Annualized Sortino</td><td>1.59</td></tr>
+            <tr><td>Tail ratio</td><td>1.11</td></tr>
+            <tr><td>Hit rate</td><td>52.6%</td></tr>
+            <tr><td>Profit factor</td><td>1.23</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Interpretation</h2>
+        <p>
+          The realised outcomes fall inside the original design envelope: roughly 20–30% annualized volatility,
+          Sharpe around 0.8–1.2, maximum drawdown below about 25%, and no extreme blow-up in the return distribution.
+          The realised volatility of 19.1% is slightly below the nominal target, suggesting that the covariance and
+          risk-scaling logic was conservative rather than aggressive.
+        </p>
+
+        <p>
+          A maximum drawdown of -18.5% is inside the expected downside bound. The Sortino ratio of 1.59 and tail ratio
+          above 1 suggest that downside tails did not dominate P&amp;L, even though returns remain fat-tailed as expected
+          for crypto markets.
+        </p>
+
+        <h2>Risk limits and liquidation behavior</h2>
+        <p>
+          No portfolio-level risk limits were breached during the backtest. Daily losses occasionally approached the
+          4–5% range on extreme days, but they did not cluster in a way that suggested regime breakdown. There was no
+          need for forced portfolio liquidation; position sizing remained algorithmic and driven by volatility and trend.
+        </p>
+
+        <h2>Recent stress windows</h2>
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>Window</th>
+              <th>Total Return</th>
+              <th>Annualized Vol</th>
+              <th>Annualized Sharpe</th>
+              <th>Max Drawdown</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last 15 days</td>
+              <td>-3.75%</td>
+              <td>8.39%</td>
+              <td>-6.56</td>
+              <td>-4.72%</td>
+            </tr>
+            <tr>
+              <td>Last 45 days</td>
+              <td>-3.82%</td>
+              <td>10.79%</td>
+              <td>-2.07</td>
+              <td>-7.03%</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          The recent short-window losses are consistent with a trend-reversal environment rather than structural model
+          failure. Drawdowns stayed shallow, volatility remained below the long-run estimate, and no risk limits were
+          breached.
+        </p>
+
+        <h2>Extensions</h2>
+        <ul>
+          <li>Regime-based risk overlays using BTC dominance, funding rates, stablecoin flows, or implied volatility.</li>
+          <li>Event-aware exposure throttling around macro announcements, ETF decisions, or exchange-related headlines.</li>
+          <li>Cross-sectional trend tilts toward coins with stronger and more persistent trend forecasts.</li>
+          <li>Small tail-hedge overlay using options or options proxies.</li>
+        </ul>
+
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <p>© 2026 Angad Bhatti. Research website hosted on GitHub Pages.</p>
+  </div>
+</footer>
+
+</body>
+</html>
