@@ -153,3 +153,73 @@ h3{font-size:20px;margin:0 0 8px;letter-spacing:-.015em}
   border-radius: 8px;
   font-size: 0.98rem;
 }
+
+/* PROJECT SECTION */
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.card {
+  padding: 1.5rem;
+  border: 1px solid #e3e3e3;
+  border-radius: 14px;
+  background: #fff;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.card h3 {
+  margin: 0.5rem 0 0.75rem;
+  font-size: 1.1rem;
+  line-height: 1.35;
+}
+
+.card h3 a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.card p {
+  margin-bottom: 0.75rem;
+}
+
+.eyebrow {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.section-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.section-header span {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.section-header h2 {
+  margin: 0;
+}
+
+.section-header a {
+  width: fit-content;
+  text-decoration: none;
+  font-weight: 600;
+}
