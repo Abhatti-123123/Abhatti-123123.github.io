@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Revenue Forecasting | Angad Bhatti</title>
-  <meta name="description" content="Research website of Angad Bhatti.">
-  <link rel="stylesheet" href="../style.css">
+  <title>Signal Incrementality Analysis | Angad Bhatti</title>
+  <meta name="description" content="Walk-forward retail sales nowcasting project for Walmart revenue.">
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
 
@@ -22,7 +22,99 @@
   </div>
 </header>
 
-<main class='container article-layout'><section class='page-title'><div class='kicker'>Project</div><h1>Revenue Forecasting</h1></section><article class='article'><p>Walk-forward forecasting project evaluating whether retail-sales data contains incremental signal for revenue prediction.</p><a class='small-link' href='/projects/'>Back to projects</a></article></main>
+<main>
+  <section class="page-title">
+    <div class="container">
+      <div class="kicker">Alternative Data · Forecasting · Walk-Forward Validation</div>
+      <h1>Signal Incrementality Analysis for Revenue Forecasting</h1>
+      <p class="lead">
+        A nowcasting study testing whether public retail sales data adds incremental predictive value
+        over a strong seasonal baseline for Walmart quarterly revenue.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container article-layout">
+      <article class="article">
+        <h2>Question</h2>
+        <p>
+          Walmart reports quarterly revenue after quarter-end, while monthly retail sales data is available earlier.
+          The project asks whether retail sales data can improve a pre-earnings estimate of Walmart revenue beyond
+          what Walmart's own seasonal history already predicts.
+        </p>
+
+        <h2>Method</h2>
+        <p>
+          The baseline uses Walmart's historical quarter-to-quarter seasonal growth medians. For each transition
+          such as Q1→Q2 or Q3→Q4, the model estimates a median growth rate from prior data and applies it to the
+          previous quarter's revenue.
+        </p>
+        <p>
+          The enhanced model adds a deseasoned retail signal. Quarterly retail sales are compared against the
+          expected seasonal pattern, and the residual retail surprise is used alongside the baseline forecast.
+          All results are evaluated in a walk-forward setup to avoid future information leakage.
+        </p>
+
+        <h2>Results</h2>
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>R²</th>
+              <th>RMSE</th>
+              <th>MAE</th>
+              <th>MAPE</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Baseline: seasonal median only</td>
+              <td>0.970</td>
+              <td>$3.79B</td>
+              <td>$2.62B</td>
+              <td>1.77%</td>
+            </tr>
+            <tr>
+              <td>Reg3: deseasoned retail + baseline</td>
+              <td>0.978</td>
+              <td>$3.26B</td>
+              <td>$2.16B</td>
+              <td>1.44%</td>
+            </tr>
+            <tr>
+              <td><strong>Improvement</strong></td>
+              <td><strong>+0.8pp</strong></td>
+              <td><strong>-14%</strong></td>
+              <td><strong>-18%</strong></td>
+              <td><strong>-0.33pp</strong></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>Interpretation</h2>
+        <p>
+          The seasonal baseline is already strong, which makes the incremental signal hard to prove.
+          Even so, the deseasoned retail feature improves RMSE, MAE, and MAPE on the walk-forward sample.
+          The edge is real but modest rather than transformational.
+        </p>
+
+        <h2>Main caveats</h2>
+        <ul>
+          <li>Retail data revisions may overstate real-time accuracy because the available FRED series is revised.</li>
+          <li>COVID broke the retail-to-Walmart relationship, so structural breaks matter.</li>
+          <li>The sample is small by machine-learning standards, even with walk-forward testing.</li>
+          <li>The analysis does not yet include transaction costs, options pricing, or position sizing.</li>
+        </ul>
+
+        <h2>Links</h2>
+        <div class="actions">
+          <a class="small-link" href="https://github.com/Abhatti-123123/signal-incrementality-analysis" target="_blank">GitHub Repository →</a>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>
 
 <footer class="footer">
   <div class="container">
