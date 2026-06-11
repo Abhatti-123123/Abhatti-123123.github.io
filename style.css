@@ -144,3 +144,12 @@ h3{font-size:20px;margin:0 0 8px;letter-spacing:-.015em}
   cursor: pointer;
   font-weight: 600;
 }
+
+.opportunity-box {
+  margin-top: 1.25rem;
+  padding: 1rem 1.25rem;
+  border-left: 4px solid #222;
+  background: #f6f6f6;
+  border-radius: 8px;
+  font-size: 0.98rem;
+}
