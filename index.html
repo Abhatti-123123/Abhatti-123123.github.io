@@ -1,27 +1,132 @@
-
-<html><head><title>Angad Bhatti</title><link rel='stylesheet' href='style.css'></head>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Angad Bhatti | Quantitative Research</title>
+  <meta name="description" content="Research website of Angad Bhatti.">
+  <link rel="stylesheet" href="style.css">
+</head>
 <body>
-<nav>
-<a href="/">Home</a>
-<a href="/research/">Research</a>
-<a href="/projects/">Projects</a>
-<a href="/blog/">Blog</a>
-<a href="/cv/">CV</a>
-</nav>
 
-<h1>Angad Bhatti</h1>
-<p>Quantitative Research | Market Memory | Financial Machine Learning</p>
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="/">Angad<span>Bhatti</span></a>
+    <nav class="links">
+      <a href="/research/">Research</a>
+      <a href="/projects/">Projects</a>
+      <a href="/blog/">Blog</a>
+      <a href="/cv/">CV</a>
+      <a href="mailto:ab130@fordham.edu">Contact</a>
+    </nav>
+  </div>
+</header>
 
-<h2>Featured Research</h2>
-<div class='grid'>
-<div class='card'><a href='/research/detectability-boundaries.html'>Finite-Sample Long-Memory Estimation via Detectability Boundaries</a></div>
-<div class='card'><a href='/research/over-differencing.html'>Market Memory Structure and the Cost of Over-Differencing</a></div>
-</div>
 
-<h2>Featured Blog Articles</h2>
-<div class='grid'>
-<div class='card'><a href='/blog/differencing/over-differencing-asymmetry.html'>The Strange Asymmetry of Over-Differencing</a></div>
-<div class='card'><a href='/blog/differencing/returns-as-convention.html'>Returns Are a Convention, Not a Measurement</a></div>
-<div class='card'><a href='/blog/memory/estimator-disagreement.html'>Why Long-Memory Estimators Disagree</a></div>
-</div>
-</body></html>
+<main>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="eyebrow">Quantitative Research · Market Memory · Financial ML</div>
+        <h1>Measuring persistence, differencing error, and signal loss in financial time series.</h1>
+        <p class="lead">
+          I am an MS Quantitative Finance student at Fordham University. My current research studies
+          market memory, finite-sample detectability, over-differencing costs, and the relationship
+          between returns and innovations.
+        </p>
+        <div class="cta">
+          <a class="button primary" href="/research/">View Research</a>
+          <a class="button" href="/blog/">Read Blog</a>
+          <a class="button" href="/assets/Angad_Bhatti_Resume.pdf">Resume PDF</a>
+        </div>
+        <div class="badges">
+          <span class="badge">Long Memory</span>
+          <span class="badge">Fractional Differencing</span>
+          <span class="badge">Market Microstructure</span>
+          <span class="badge">Machine Learning</span>
+        </div>
+      </div>
+      <aside class="hero-card">
+        <h3>Current research program</h3>
+        <p class="muted">
+          My work asks whether the standard return transform removes too much structure before
+          forecasting begins. The central objects are finite-sample memory boundaries,
+          over-differencing costs, and how persistence survives or disappears under transformations.
+        </p>
+        <ul class="list-clean">
+          <li><strong>Email:</strong> <a href="mailto:ab130@fordham.edu">ab130@fordham.edu</a></li>
+          <li><strong>GitHub:</strong> <a href="https://github.com/Abhatti-123123">Abhatti-123123</a></li>
+          <li><strong>Location:</strong> New York, NY</li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="kicker">Research</div>
+          <h2>Featured papers and notes</h2>
+        </div>
+        <a class="small-link" href="/research/">All research →</a>
+      </div>
+      <div class="grid">
+        <div class="paper-card">
+          <div class="meta">Working Paper</div>
+          <h3><a href="/research/detectability-boundaries.html">Finite-Sample Long-Memory Estimation via Detectability Boundaries</a></h3>
+          <p class="muted">A finite-sample framework for detecting when hyperbolic ACF tail structure remains statistically resolvable.</p>
+        </div>
+        <div class="paper-card">
+          <div class="meta">Working Paper</div>
+          <h3><a href="/research/over-differencing.html">Market Memory Structure and the Cost of Over-Differencing</a></h3>
+          <p class="muted">An empirical study of how differencing choices affect forecastability across S&P 500 constituents.</p>
+        </div>
+        <div class="paper-card">
+          <div class="meta">Research Note</div>
+          <h3><a href="/research/convention-error-framework.html">Convention Error Framework</a></h3>
+          <p class="muted">A conceptual framework connecting returns, memory, innovations, and the cost of conventional transforms.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="kicker">Blog</div>
+          <h2>Short technical essays</h2>
+        </div>
+        <a class="small-link" href="/blog/">All posts →</a>
+      </div>
+      <div class="grid">
+        <div class="article-card">
+          <div class="meta">Differencing · 4 min read</div>
+          <h3><a href="/blog/differencing/over-differencing-asymmetry.html">The Strange Asymmetry of Over-Differencing</a></h3>
+          <p class="muted">Why under-differencing announces itself while over-differencing can create artificial structure.</p>
+        </div>
+        <div class="article-card">
+          <div class="meta">Market Memory · 5 min read</div>
+          <h3><a href="/blog/market-memory/what-is-market-memory.html">What Does Market Memory Mean?</a></h3>
+          <p class="muted">A short introduction to persistence, long memory, and why financial time series are difficult to transform.</p>
+        </div>
+        <div class="article-card">
+          <div class="meta">Returns · 5 min read</div>
+          <h3><a href="/blog/differencing/returns-as-convention.html">Returns Are a Convention, Not a Measurement</a></h3>
+          <p class="muted">The first difference is economically natural, but it is still a modeling choice.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+
+<footer class="footer">
+  <div class="container">
+    <p>© 2026 Angad Bhatti. Research website hosted on GitHub Pages.</p>
+  </div>
+</footer>
+
+</body>
+</html>

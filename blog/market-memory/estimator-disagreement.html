@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Returns Are a Convention, Not a Measurement | Angad Bhatti</title>
+  <title>Why Long-Memory Estimators Disagree | Angad Bhatti</title>
   <meta name="description" content="Research website of Angad Bhatti.">
   <link rel="stylesheet" href="../../style.css">
 </head>
@@ -26,11 +26,11 @@
 <main class="container article-layout">
   <section class="page-title">
     <div class="kicker">Blog</div>
-    <h1>Returns Are a Convention, Not a Measurement</h1>
+    <h1>Why Long-Memory Estimators Disagree</h1>
     <p class="muted">Draft essay. Revise in your voice before sharing publicly.</p>
   </section>
   <article class="article">
-    <p>Returns are one of the most natural objects in finance. They are economically meaningful, additive over portfolios in useful ways, and central to risk and performance measurement.</p><p>But returns are also a transformation: the first difference of the price path. Treating returns as the default empirical object is equivalent to imposing a particular differencing choice on every asset at every time.</p><p>My work asks what happens when that choice does not match the operative memory structure of the market. If a smaller differencing order already removes the relevant memory, then further differencing is not revealing innovations. It may be transforming away structure.</p>
+    <p>Long-memory estimators often disagree because they are not all measuring the same thing under real market conditions. Classical frequency-domain methods work well under clean model assumptions, but financial data contain regime shifts, volatility clustering, structural breaks, and microstructure effects.</p><p>A frequency-domain estimator may target an asymptotic fractional integration parameter. A tail-geometry method may target where memory remains visible in a finite sample. A forecasting pipeline may care about a third object: the transform that preserves useful signal while removing unstable dependence.</p><p>The disagreement is not always a bug. Sometimes it is evidence that the data-generating process is richer than the model each estimator assumes.</p>
     <div class="related">
       <h3>Related</h3>
       <ul>

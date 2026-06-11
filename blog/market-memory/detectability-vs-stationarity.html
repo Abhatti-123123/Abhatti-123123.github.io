@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Returns Are a Convention, Not a Measurement | Angad Bhatti</title>
+  <title>Detectability vs Stationarity | Angad Bhatti</title>
   <meta name="description" content="Research website of Angad Bhatti.">
   <link rel="stylesheet" href="../../style.css">
 </head>
@@ -26,11 +26,11 @@
 <main class="container article-layout">
   <section class="page-title">
     <div class="kicker">Blog</div>
-    <h1>Returns Are a Convention, Not a Measurement</h1>
+    <h1>Detectability vs Stationarity</h1>
     <p class="muted">Draft essay. Revise in your voice before sharing publicly.</p>
   </section>
   <article class="article">
-    <p>Returns are one of the most natural objects in finance. They are economically meaningful, additive over portfolios in useful ways, and central to risk and performance measurement.</p><p>But returns are also a transformation: the first difference of the price path. Treating returns as the default empirical object is equivalent to imposing a particular differencing choice on every asset at every time.</p><p>My work asks what happens when that choice does not match the operative memory structure of the market. If a smaller differencing order already removes the relevant memory, then further differencing is not revealing innovations. It may be transforming away structure.</p>
+    <p>Stationarity and detectability are often treated as if they are the same issue. They are not. A series can be technically stationary while still carrying long-range dependence that matters for forecasting. Conversely, a diagnostic can fail to detect persistence simply because the relevant signal is below the resolution of the sample.</p><p>This distinction motivates my use of a detectability boundary. Instead of asking only whether a series is stationary, I ask where hyperbolic ACF tail structure stops being empirically resolvable. That boundary is a practical object: it depends on sample size, lag structure, and the geometry of the observed process.</p><p>The research question is therefore not just "is the series stationary?" but "how much memory can we actually see, and how much should we remove before modeling?" </p>
     <div class="related">
       <h3>Related</h3>
       <ul>

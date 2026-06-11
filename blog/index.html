@@ -1,31 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Blog | Angad Bhatti</title>
+  <meta name="description" content="Research website of Angad Bhatti.">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
 
-<html><head><link rel='stylesheet' href='../style.css'></head><body>
-<nav>
-<a href="/">Home</a>
-<a href="/research/">Research</a>
-<a href="/projects/">Projects</a>
-<a href="/blog/">Blog</a>
-<a href="/cv/">CV</a>
-</nav>
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="/">Angad<span>Bhatti</span></a>
+    <nav class="links">
+      <a href="/research/">Research</a>
+      <a href="/projects/">Projects</a>
+      <a href="/blog/">Blog</a>
+      <a href="/cv/">CV</a>
+      <a href="mailto:ab130@fordham.edu">Contact</a>
+    </nav>
+  </div>
+</header>
 
-<h1>Research Blog</h1>
 
-<div class='category'>
-<h2>Market Memory</h2>
-<ul>
-<li><a href='memory/what-is-market-memory.html'>What Does Market Memory Mean?</a></li>
-<li><a href='memory/detectability-vs-stationarity.html'>Detectability vs Stationarity</a></li>
-<li><a href='memory/estimator-disagreement.html'>Why Long-Memory Estimators Disagree</a></li>
-</ul>
-</div>
+<main class="container">
+  <section class="page-title">
+    <div class="kicker">Blog</div>
+    <h1>Short technical essays</h1>
+    <p class="lead">Accessible explanations of ideas behind my research program.</p>
+  </section>
 
-<div class='category'>
-<h2>Differencing & Forecasting</h2>
-<ul>
-<li><a href='differencing/over-differencing-asymmetry.html'>The Strange Asymmetry of Over-Differencing</a></li>
-<li><a href='differencing/returns-as-convention.html'>Returns Are a Convention, Not a Measurement</a></li>
-<li><a href='differencing/return-innovations.html'>Return Innovations vs Returns</a></li>
-</ul>
-</div>
+  <section class="category">
+    <h2 class="category-title">Market Memory</h2>
+    <div class="grid">
+      <div class="article-card"><div class="meta">5 min read</div><h3><a href="market-memory/what-is-market-memory.html">What Does Market Memory Mean?</a></h3><p class="muted">Persistence, long memory, and what it means for a market to store information.</p></div>
+      <div class="article-card"><div class="meta">5 min read</div><h3><a href="market-memory/detectability-vs-stationarity.html">Detectability vs Stationarity</a></h3><p class="muted">Why stationarity tests and finite-sample detectability are not the same object.</p></div>
+      <div class="article-card"><div class="meta">6 min read</div><h3><a href="market-memory/estimator-disagreement.html">Why Long-Memory Estimators Disagree</a></h3><p class="muted">A short guide to why different persistence estimators can tell different stories.</p></div>
+    </div>
+  </section>
 
-</body></html>
+  <section class="category">
+    <h2 class="category-title">Differencing & Forecasting</h2>
+    <div class="grid">
+      <div class="article-card"><div class="meta">4 min read</div><h3><a href="differencing/over-differencing-asymmetry.html">The Strange Asymmetry of Over-Differencing</a></h3><p class="muted">Why too little differencing and too much differencing fail in very different ways.</p></div>
+      <div class="article-card"><div class="meta">5 min read</div><h3><a href="differencing/returns-as-convention.html">Returns Are a Convention, Not a Measurement</a></h3><p class="muted">The first difference is a transformation, not a law of nature.</p></div>
+      <div class="article-card"><div class="meta">5 min read</div><h3><a href="differencing/return-innovations.html">Return Innovations vs Returns</a></h3><p class="muted">Are returns primitive innovations, or transformed innovations?</p></div>
+    </div>
+  </section>
+
+  <section class="category">
+    <h2 class="category-title">Future Topics</h2>
+    <div class="grid two">
+      <div class="article-card"><h3><a href="microstructure/coming-soon.html">Market Microstructure</a></h3><p class="muted">Order flow memory, impact decay, and intraday persistence.</p></div>
+      <div class="article-card"><h3><a href="machine-learning/coming-soon.html">Machine Learning</a></h3><p class="muted">Forecasting pipelines, preprocessing, and signal preservation.</p></div>
+    </div>
+  </section>
+</main>
+
+
+<footer class="footer">
+  <div class="container">
+    <p>© 2026 Angad Bhatti. Research website hosted on GitHub Pages.</p>
+  </div>
+</footer>
+
+</body>
+</html>
