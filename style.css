@@ -103,3 +103,44 @@ h3{font-size:20px;margin:0 0 8px;letter-spacing:-.015em}
   h1{font-size:38px}
   .links{gap:12px}
 }
+
+.subscribe-section {
+  margin: 4rem auto 2rem;
+  padding: 2rem;
+  max-width: 720px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  text-align: center;
+  background: #fafafa;
+}
+
+.subscribe-section h2 {
+  margin-bottom: 0.5rem;
+}
+
+.subscribe-section p {
+  margin-bottom: 1.2rem;
+  color: #555;
+}
+
+.subscribe-form {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.subscribe-form input {
+  padding: 0.75rem;
+  min-width: 260px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.subscribe-form button {
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
