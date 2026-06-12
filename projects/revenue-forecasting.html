@@ -56,6 +56,36 @@
           All results are evaluated in a walk-forward setup to avoid future information leakage.
         </p>
 
+        <h2>Seasonality and structural break checks</h2>
+
+        <p>
+          The baseline works because Walmart revenue has stable quarter-to-quarter seasonal structure.
+          Q1→Q2, Q2→Q3, Q3→Q4, and Q4→Q1 transitions show persistent seasonal growth patterns,
+          making a seasonal median forecast a hard baseline to beat.
+        </p>
+
+        <figure class="research-figure">
+          <img src="/assets/images/walmart_seasonality.png" alt="Walmart quarterly seasonal revenue growth stability">
+          <figcaption>
+            Walmart quarter-to-quarter revenue growth by transition type. The stability of these lines motivates
+            the seasonal median baseline.
+          </figcaption>
+        </figure>
+
+        <p>
+          COVID quarters were excluded from the final training and evaluation window because the retail-to-Walmart
+          relationship visibly broke during 2020–2021. Including COVID produces a coefficient sign flip in the
+          deseasoned retail feature, which is a structural-break warning rather than a normal regime shift.
+        </p>
+
+        <figure class="research-figure">
+          <img src="/assets/images/walmart_coef_with_covid.png" alt="Reg3 coefficient stability with COVID">
+          <figcaption>
+            Including COVID creates a sign flip in the deseasoned retail coefficient, suggesting that the
+            retail-to-Walmart mapping broke during the shock period.
+          </figcaption>
+        </figure>
+
         <h2>Results</h2>
         <table class="results-table">
           <thead>
@@ -92,6 +122,30 @@
           </tbody>
         </table>
 
+        <h2>Model stability diagnostics</h2>
+
+        <p>
+          Excluding COVID quarters makes the deseasoned retail coefficient more stable, though it still varies over time.
+          This supports the interpretation that the signal is real but modest, and that structural breaks remain the
+          main deployment risk.
+        </p>
+
+        <figure class="research-figure">
+          <img src="/assets/images/walmart_coef_ex_covid.png" alt="Reg3 coefficient stability excluding COVID">
+          <figcaption>
+            Reg3 coefficient stability after excluding COVID quarters. The deseasoned retail coefficient becomes
+            more interpretable once the structural-break period is removed.
+          </figcaption>
+        </figure>
+
+        <figure class="research-figure">
+          <img src="/assets/images/walmart_rmse_diagnostics.png" alt="Walmart RMSE diagnostics">
+          <figcaption>
+            Expanding and rolling RMSE diagnostics comparing the baseline against Reg3. Reg3 generally improves
+            forecast error, but the advantage is not uniform across all periods.
+          </figcaption>
+        </figure>
+
         <h2>Interpretation</h2>
         <p>
           The seasonal baseline is already strong, which makes the incremental signal hard to prove.
@@ -102,9 +156,12 @@
         <h2>Main caveats</h2>
         <ul>
           <li>Retail data revisions may overstate real-time accuracy because the available FRED series is revised.</li>
-          <li>COVID broke the retail-to-Walmart relationship, so structural breaks matter.</li>
           <li>The sample is small by machine-learning standards, even with walk-forward testing.</li>
-          <li>The analysis does not yet include transaction costs, options pricing, or position sizing.</li>
+          <li>
+            <strong>Structural breaks:</strong> COVID quarters were removed because the retail-to-Walmart relationship
+            broke visibly during 2020–2021. A future shock, category-mix change, recession, or competitive disruption
+            could create a similar break and reduce live model reliability.
+          </li>
         </ul>
 
         <h2>Links</h2>
