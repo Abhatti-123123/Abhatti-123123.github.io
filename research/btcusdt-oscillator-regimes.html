@@ -28,8 +28,8 @@
       <div class="kicker">Market Microstructure · Crypto · Intraday Mean Reversion</div>
       <h1>Intraday Mean Reversion and Oscillator Regimes in BTCUSDT</h1>
       <p class="lead">
-        A 1-minute BTCUSDT study of return EMA features, oscillator construction, correlation stability,
-        regime shifts, and Markov amplitude dynamics.
+        A 1-minute BTCUSDT study of return EMA features, oscillator construction,
+        daily correlation stability, sliding-window parameter regimes, and Markov transition structure.
       </p>
     </div>
   </section>
@@ -38,157 +38,274 @@
     <div class="container article-layout">
       <article class="article">
 
-        <h2>Question</h2>
+        <h2>Research question</h2>
         <p>
-          This project studies whether short-horizon BTCUSDT returns contain stable, exploitable mean-reversion
-          structure. The focus is not a full trading system, but the behavior of intraday features: EMA-smoothed
-          returns, MACD-like oscillators, and the stability of their predictive correlations over time.
+          This project studies whether short-horizon BTCUSDT returns contain stable intraday mean-reversion
+          structure. The focus is not a full trading system, but the empirical behavior of return EMAs,
+          MACD-style oscillators, and the stability of their predictive correlations over time.
         </p>
 
-        <h2>Data and features</h2>
+        <h2>Return EMA features and correlation structure</h2>
         <p>
-          Let r<sub>t</sub> denote the 1-minute log return of BTCUSDT. I construct exponential moving averages of
-          returns with halflives 1, 3, 10, 30, 100, 300, and 1000 minutes. Future returns are measured over 1, 5,
-          and 15-minute horizons.
+          Let r<sub>t</sub> denote the 1-minute log return of the BTCUSDT mid price. I generate exponential
+          moving averages of returns for halflives
+          λ ∈ {1, 3, 10, 30, 100, 300, 1000}, and compute Spearman correlations with future returns at
+          1, 5, and 15-minute horizons using BTCUSDT data for 2023.
         </p>
 
+        <pre><code>EMA_h(t) = α_h r_t + (1 − α_h) EMA_h(t − 1),
+α_h = 1 − 2^(-1/h)</code></pre>
+
         <p>
-          Because the feature and target distributions are heavily non-Gaussian, I rely primarily on rank-based
-          dependence measures such as Spearman correlation rather than Pearson correlation.
+          Shorter halflives show stronger instantaneous correlation with raw returns, while medium halflives
+          such as 10 and 30 minutes give the best predictive power for 5-minute forward returns. Longer
+          halflives, such as 100 to 1000, behave like low-pass filters, becoming smoother and closer to
+          Gaussian in their centers while still retaining heavy tails.
         </p>
 
         <h2>Distributional diagnostics</h2>
+        <p>
+          Before studying correlations, I check how far the features are from Gaussianity. Jarque-Bera tests
+          on all EMAs and future returns give extremely large statistics and p-values numerically equal to zero.
+          For the raw, non-winsorized series, kurtosis is very high, roughly 22–371 for EMAs and 70–261 for
+          future returns, with noticeable skewness.
+        </p>
+
+        <p>
+          After 0.5% top/bottom winsorization, kurtosis falls but remains far above the Gaussian value of 3.
+          This suggests that non-normality is structural, driven by volatility clustering, jumps, and
+          microstructure noise, rather than only a handful of outliers.
+        </p>
+
         <div class="qq-grid">
-          <img src="/assets/images/qqplot_h1.png" alt="QQ plot h1">
-          <img src="/assets/images/qqplot_h30.png" alt="QQ plot h30">
-          <img src="/assets/images/qqplot_h1000.png" alt="QQ plot h1000">
+          <img src="/assets/images/qqplot_h1.png" alt="QQ plot versus normal distribution for ret_ema_h1">
+          <img src="/assets/images/qqplot_h30.png" alt="QQ plot versus normal distribution for ret_ema_h30">
+          <img src="/assets/images/qqplot_h1000.png" alt="QQ plot versus normal distribution for ret_ema_h1000">
         </div>
 
         <p class="figure-note">
-          As the EMA halflife increases, the center of the distribution becomes more Gaussian,
-          but substantial tail deviations remain even for very long smoothing windows.
+          QQ-plots versus the normal distribution for short-, medium-, and long-halflife EMAs.
+          As halflife increases, the center becomes more Gaussian, but tail deviations remain large.
         </p>
-        <ul>
-          <li>EMA features and future returns have strong heavy tails and asymmetric behavior.</li>
-          <li>Jarque-Bera tests reject normality across EMAs and forward returns.</li>
-          <li>Winsorization reduces kurtosis but does not remove the structural non-normality.</li>
-          <li>Longer halflife EMAs become smoother and more Gaussian in the center, but tail deviations remain.</li>
-        </ul>
 
-        <h2>EMA correlation structure</h2>
+        <h2>Cross-correlation structure</h2>
         <p>
-          Nearby halflives are highly correlated because they are smoothed versions of the same return process.
-          Correlation decreases as the halflife gap widens: short EMAs respond to microstructure noise, while long
-          EMAs track slower intraday drift.
+          The EMA correlation matrix shows very high correlations between nearby halflives, such as
+          ρ(ret_ema_h10, ret_ema_h30) ≈ 0.87, because they are all smoothed versions of the same return
+          process. Correlation decreases as the halflife gap widens: short EMAs react mostly to microstructure
+          noise, while long EMAs track slow intraday drift.
         </p>
 
         <p>
-          Correlations between EMA features and future returns are small but systematically negative, indicating
-          weak short-term mean reversion. The effect is strongest at 5 to 15-minute horizons rather than at 1 minute.
+          Correlations between EMAs and future returns are small but systematically negative. For 1-minute
+          horizons, Spearman correlations are around -0.02 to -0.03. For 5-minute horizons, they increase in
+          magnitude to roughly -0.04 to -0.06. For 15-minute horizons, they are slightly more negative still.
+          Predictive power therefore increases with both EMA halflife and forecast horizon.
         </p>
 
-        <h2>Daily stability</h2>
+        <h2>Daily correlation stability</h2>
+        <p>
+          Based on the 5-minute future return, EMA10 has one of the strongest negative correlations, so I use
+          ret_ema_h10 for daily stability analysis. For each trading day in 2023, I compute the Spearman
+          correlation between ret_ema_h10 and fwd_ret_5m over the 1440 one-minute observations for that day.
+        </p>
+
         <figure class="research-figure">
-          <img src="/assets/images/daily_corr_timeseries.png" alt="Daily EMA10 correlation stability">
+          <img src="/assets/images/daily_corr_timeseries.png" alt="Daily Spearman correlation between EMA10 and 5-minute forward returns">
           <figcaption>
-            Daily Spearman correlation between EMA10 and 5-minute forward returns during 2023.
-            The effect is weak but persistently negative across most trading days.
+            Daily Spearman correlation between EMA10 and 5-minute forward returns in 2023.
+            The series is mostly negative, with meaningful day-to-day variation.
           </figcaption>
         </figure>
-        <p>
-          EMA10 has one of the strongest negative correlations with 5-minute forward returns. Computing this
-          correlation day by day in 2023 gives an average daily Spearman correlation of approximately -0.0815,
-          with standard deviation around 0.054. The signal is weak, but it is negative on most days and reasonably
-          stable across the year.
-        </p>
-
-        <h2>Oscillator construction</h2>
-        <p>
-          I construct MACD-style oscillators of the form:
-        </p>
-
-        <pre><code>Osc(t; λ1, λ2, A) = EMA_λ1(t) - A · EMA_λ2(t)</code></pre>
 
         <p>
-          where λ1 and λ2 are selected from the EMA halflife grid and A is selected from {0.5, 1, 2}. These oscillators
-          compare a shorter-term return state against a longer-term trend component.
+          Numerically, the original non-winsorized data gives an average daily Spearman correlation of
+          approximately -0.0815 with standard deviation around 0.054. After 0.5% winsorization of both variables,
+          the mean and standard deviation are essentially unchanged, confirming that the rank-based correlation
+          is robust to tail clipping.
         </p>
 
-        <h2>Main oscillator findings</h2>
+        <p>
+          The daily time-series plot shows that correlations are negative on most days, typically between -0.15
+          and 0, with occasional excursions down to about -0.25. The signal is weak but persistent, and the
+          correlation distribution across days is reasonably stable.
+        </p>
+
+        <h2>Oscillator construction and predictive power</h2>
+        <p>
+          I construct oscillators of the form:
+        </p>
+
+        <pre><code>Osc(t; λ1, λ2, A) = EMA_λ1(t) − A · EMA_λ2(t)</code></pre>
+
+        <p>
+          where λ1, λ2 ∈ {1, 3, 10, 30, 100, 300, 1000} and A ∈ {0.5, 1, 2}. These oscillators compare a
+          shorter-term EMA to a longer-term trend and are analogous to MACD-type structures.
+        </p>
+
+        <p>
+          Using 2023 data, I compute Spearman correlations between each oscillator and future 1, 5, and
+          15-minute returns. All correlations are negative, indicating that these oscillators behave as
+          mean-reversion signals: large positive oscillator values are followed, on average, by negative future
+          returns, and vice versa.
+        </p>
+
         <ul>
-          <li>All oscillator correlations with future returns are negative, consistent with mean reversion.</li>
-          <li>Medium/long halflife combinations dominate pure short-term combinations.</li>
-          <li>In 2023, EMA30 versus EMA100 performs well for 5-minute returns, with correlation around -0.06.</li>
-          <li>EMA100 versus EMA300 performs well for 15-minute returns, reaching roughly -0.07.</li>
-          <li>Correlation strength increases with horizon: 1-minute is weakest, 5-minute stronger, and 15-minute strongest.</li>
+          <li>Very short-halflife oscillators, such as λ1 = 1 versus λ2 = 10 or 30, have relatively weak correlations, around -0.02 to -0.05.</li>
+          <li>Medium/long-halflife combinations, such as 30 versus 100 and 100 versus 300, produce the strongest predictive power.</li>
+          <li>For 2023, EMA30 − A·EMA100 with A near 1 reaches about -0.06 correlation at the 5-minute horizon.</li>
+          <li>EMA100 − A·EMA300 with A near 0.5 reaches about -0.07 correlation at the 15-minute horizon, the strongest overall result.</li>
         </ul>
 
-        <h2>2023 vs 2024 regime shift</h2>
+        <h2>2023 vs 2024 regime difference</h2>
         <p>
-          Repeating the analysis on 2024 data gives the same qualitative ranking, but with weaker magnitudes.
-          A 30/100 oscillator that reached about -0.062 correlation with 5-minute returns in 2023 fell to about
-          -0.036 in 2024. A 100/300 oscillator that reached about -0.071 with 15-minute returns in 2023 fell to
-          about -0.044 in 2024.
+          Repeating the same oscillator analysis on 2024 data gives the same qualitative pattern: correlations
+          remain negative, stronger for longer horizons, and strongest for medium/long-halflife combinations.
+          However, magnitudes are systematically smaller. A 30/100 oscillator has about -0.036 correlation with
+          5-minute returns in 2024 versus roughly -0.062 in 2023. A 100/300 oscillator has about -0.044 correlation
+          with 15-minute returns in 2024 versus roughly -0.071 in 2023.
         </p>
 
         <p>
-          This suggests the structure did not disappear, but the strength of short-horizon BTCUSDT mean reversion
-          weakened materially between 2023 and 2024.
+          Across oscillators and horizons, 2024 correlations are typically about 40–60% weaker in magnitude.
+          This indicates that the sign and relative ranking of oscillator structures are stable, but short-term
+          mean reversion in BTCUSDT became materially weaker in 2024.
         </p>
 
-        <h2>Sliding-window parameter search</h2>
+        <h2>Sliding-window search for best oscillator parameters</h2>
         <p>
-          To study whether the best oscillator parameters evolve over time, I run a 1–30 day sliding-window search.
-          For each day and each trailing window length, I compute Spearman correlation between each candidate oscillator
-          and 5-minute forward returns, then record the best parameter set.
+          To go beyond fixed-parameter correlations, I run a 1–30 day sliding-window search. For each day and
+          each window length L ∈ {1, ..., 30}, I restrict the data to the trailing L days, compute the Spearman
+          correlation between each candidate oscillator and 5-minute forward returns, and select the oscillator
+          with highest absolute correlation.
         </p>
 
         <p>
-          The best parameters do not flip randomly. Instead, they show a low-dimensional regime structure:
+          The results show regime-like behavior rather than random thrashing:
         </p>
 
         <ul>
-          <li>The slow leg λ2 = 1000 dominates persistently.</li>
-          <li>The fast leg λ1 typically stays in the 10 to 30 range.</li>
-          <li>The amplitude A concentrates around 0.5 and 2.</li>
+          <li>λ2 = 1000 dominates persistently as the slow leg.</li>
+          <li>λ1 typically oscillates between 10 and 30.</li>
+          <li>A switches between discrete values but prefers A = 0.5 and A = 2.</li>
           <li>The optimal window length often saturates at 30 days.</li>
         </ul>
 
-        <h2>Markov amplitude regimes</h2>
+        <p>
+          This is consistent with a picture where underlying return dynamics evolve slowly and the optimal
+          oscillator lives in a low-dimensional manifold: medium versus ultra-long EMA, with discrete amplitude
+          regimes.
+        </p>
+
+        <h2>Stability of the two dominant EMA pairs</h2>
+        <p>
+          The two most common best-performing pairs in the sliding-window search are (λ1, λ2) = (30, 1000)
+          and (λ1, λ2) = (10, 1000). For these pairs, I track the optimal amplitude A ∈ {0.5, 1, 2}, restricted
+          to windows where that pair is selected as best.
+        </p>
+
         <figure class="research-figure">
-          <img src="/assets/images/A_stability_pairs.png" alt="Oscillator regime stability">
+          <img src="/assets/images/A_stability_pairs.png" alt="Amplitude stability for dominant BTCUSDT oscillator pairs">
           <figcaption>
-            The preferred oscillator amplitude does not change randomly.
-            Low-amplitude and high-amplitude regimes persist for long periods,
-            suggesting a slowly evolving market structure.
+            Amplitude stability for the dominant (30, 1000) and (10, 1000) EMA pairs.
+            Long intervals at A = 0.5 or A = 2 suggest persistent low- and high-amplitude regimes.
           </figcaption>
         </figure>
-        <p>
-          Treating the amplitude A as a discrete state gives highly persistent transition matrices. Pooled across windows,
-          the diagonal transition probabilities are high, especially for A = 0.5 and A = 2. The A = 1 state behaves more
-          like a transient middle state.
-        </p>
 
         <p>
-          For the dominant EMA pairs, the Markov structure is even clearer: low-amplitude and high-amplitude states are
-          persistent, while the intermediate state exits more quickly. This supports the interpretation that mean-reversion
-          strength itself is regime-dependent.
+          The combined stability plot shows long intervals where A remains at 0.5 or 2, with fewer periods at
+          A = 1. This suggests that the oscillator structure itself is stable, but the strength of the short-versus-long
+          contrast shifts between low- and high-amplitude regimes.
         </p>
 
-        <h2>Interpretation</h2>
+        <h2>Markov transition structure for amplitude regimes</h2>
         <p>
-          The evidence points to weak but persistent intraday mean reversion in BTCUSDT. The best features are not arbitrary:
-          they tend to compare medium-horizon return pressure against very slow background drift. The feature family is stable,
-          but signal strength changes across regimes.
+          Treating the amplitude A ∈ {0.5, 1.0, 2.0} as a discrete state, I estimate Markov transition matrices
+          from the time series of best-A choices. Rows denote the current amplitude and columns denote the next
+          amplitude, ordered as 0.5, 1.0, and 2.0.
         </p>
+
+        <h3>All windows pooled</h3>
+        <pre><code>P =
+[ 0.94  0.04  0.02
+  0.25  0.64  0.11
+  0.06  0.08  0.86 ]</code></pre>
+
+        <p>
+          The pooled matrix shows very high persistence on the diagonal, particularly for A = 0.5 and A = 2.
+          The A = 1 state is less persistent and behaves like a transient middle state that either reverts to
+          0.5 or transitions toward 2.
+        </p>
+
+        <h3>Dominant EMA pairs</h3>
+
+        <p><strong>Pair (λ1, λ2) = (30, 1000)</strong></p>
+        <pre><code>P(30,1000) =
+[ 0.90  0.05  0.05
+  0.27  0.73  0.00
+  0.07  0.03  0.90 ]</code></pre>
+
+        <p><strong>Pair (λ1, λ2) = (10, 1000)</strong></p>
+        <pre><code>P(10,1000) =
+[ 0.93  0.06  0.01
+  0.70  0.10  0.20
+  0.07  0.14  0.79 ]</code></pre>
+
+        <p>
+          These matrices imply two highly persistent regimes: a low-amplitude regime at A = 0.5 and a
+          high-amplitude regime at A = 2. The A = 1 state acts as an intermediate or boundary state with
+          relatively higher exit probability. This supports the interpretation that BTCUSDT short-horizon
+          return structure exhibits slow-moving discrete states that affect the optimal oscillator amplitude.
+        </p>
+
+        <h2>Summary and interpretation</h2>
+
+        <p>
+          Combining the fixed-parameter analysis, sliding-window search, and Markov structure gives the following picture.
+        </p>
+
+        <ul>
+          <li>
+            <strong>EMAs:</strong> Return EMAs across halflives are strongly non-Gaussian and heavy-tailed.
+            Medium halflives, especially 10 to 30 minutes, provide the best trade-off between noise filtering
+            and responsiveness. They show weak but persistent negative correlation with short-horizon future returns.
+          </li>
+
+          <li>
+            <strong>Oscillators:</strong> Linear combinations of EMAs of the form
+            EMA<sub>λ1</sub> − A EMA<sub>λ2</sub> produce weak mean-reversion signals whose strength increases
+            with forecast horizon from 1 to 5 to 15 minutes. The best performers contrast medium and long halflives,
+            with moderate amplitudes A ∈ {0.5, 1}.
+          </li>
+
+          <li>
+            <strong>Regime differences, 2023 vs 2024:</strong> The same structures work in both years, but the
+            2024 correlations are about 40–60% weaker. This indicates a genuine regime shift in short-term dynamics.
+          </li>
+
+          <li>
+            <strong>Sliding-window structure:</strong> A 1–30 day sliding search does not produce chaotic parameter
+            flipping. Instead, λ<sub>2</sub> = 1000 is almost always optimal as the slow leg, λ<sub>1</sub> remains
+            in a narrow medium band around 10 or 30, amplitudes concentrate on A ∈ {0.5, 2}, and the optimal window
+            length saturates at 30 days. This is consistent with a low-dimensional, slowly evolving regime structure.
+          </li>
+
+          <li>
+            <strong>Markov regimes:</strong> Modeling A as a Markov chain shows highly persistent low- and
+            high-amplitude states, especially for the dominant (30, 1000) and (10, 1000) EMA pairs. This strongly
+            suggests that short-horizon mean-reversion strength itself is regime-dependent.
+          </li>
+        </ul>
 
         <h2>Further research</h2>
+
         <ul>
-          <li>Compute stationary distributions and mean sojourn times for amplitude regimes.</li>
-          <li>Optimize continuous oscillator weights instead of using discrete A values.</li>
-          <li>Check whether amplitude transitions align with volatility, liquidity, funding, or market-event regimes.</li>
-          <li>Compare BTCUSDT results to other large crypto pairs and FX futures.</li>
-          <li>Fit Hidden Markov Models directly on oscillator and forward-return dynamics.</li>
+          <li>Compute stationary distributions of the Markov chains for A, both pooled and pair-specific, to quantify long-run regime occupancy and mean sojourn times.</li>
+          <li>Extend the oscillator search to continuous A by optimizing a linear regression of future returns on EMA<sub>λ1</sub> and EMA<sub>λ2</sub>, rather than using a discrete grid.</li>
+          <li>Check whether transitions in the amplitude Markov chain align with observable volatility regimes, liquidity shifts, or macro and crypto-specific events.</li>
+          <li>Evaluate whether regime-conditioned oscillators, using different (λ<sub>1</sub>, λ<sub>2</sub>, A) in low- versus high-volatility regimes, improve out-of-sample performance compared to a single global oscillator.</li>
+          <li>Fit Hidden Markov Models jointly on A and (λ<sub>1</sub>, λ<sub>2</sub>) dynamics, or directly on oscillator and future-return pairs, to learn latent states and transition structure in a more formal probabilistic framework.</li>
+          <li>Compare BTCUSDT results to other large crypto pairs and to FX futures to test whether the observed EMA/oscillator regime structure is asset-specific or more universal.</li>
         </ul>
 
       </article>
