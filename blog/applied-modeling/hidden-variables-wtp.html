@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>The Most Important Variable Was Never Measured | Angad Bhatti</title>
+  <meta name="description" content="A short case study on latent attitudes, survey data, and willingness-to-pay modeling.">
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="/">Angad<span>Bhatti</span></a>
+    <nav class="links">
+      <a href="/research/">Research</a>
+      <a href="/projects/">Projects</a>
+      <a href="/blog/">Blog</a>
+      <a href="/cv/">CV</a>
+      <a href="mailto:ab130@fordham.edu">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <article class="article">
+    <div class="kicker">Applied Modeling</div>
+    <h1>The Most Important Variable Was Never Measured</h1>
+    <p class="meta">5 min read</p>
+
+    <p>
+      In applied data science, the most important variable is often not directly observed.
+    </p>
+
+    <p>
+      A recent willingness-to-pay project made this problem concrete. The goal was to model whether people were willing to financially support conservation efforts for a Canadian estuary. The survey included standard variables such as income, age, education, household characteristics, and location.
+    </p>
+
+    <p>
+      A direct model could use these variables as predictors. But this misses something important: people do not make environmental payment decisions from demographics alone.
+    </p>
+
+    <p>
+    The missing variable was not simply whether respondents cared about conservation. Some respondents may support the environmental cause but still report a lower willingness-to-pay because they do not trust the government to use the funds effectively.
+    </p>
+
+    <p>
+    In that case, the observed payment amount mixes two different objects: valuation of the conservation outcome and trust in the institution implementing it.
+    </p>
+
+    <p>
+    A low stated willingness-to-pay does not necessarily mean low environmental concern. It may reflect skepticism about whether the money will be used properly.
+    </p>
+
+    <h2>Observed answers as noisy measurements</h2>
+
+    <p>
+      The key modeling idea is to treat survey responses as noisy measurements of an underlying latent state.
+    </p>
+
+    <p>
+      Responses about trust, environmental priorities, and beliefs about public responsibility may all partially reveal a respondent's attitude toward government-led conservation. None of them is perfect alone, but together they can help estimate a hidden variable.
+    </p>
+
+    <p>
+      Once estimated, this latent attitude measure can be included in the willingness-to-pay model alongside demographics.
+    </p>
+
+    <h2>Why this matters</h2>
+
+    <p>
+      Without the latent variable, the model is forced to explain willingness-to-pay using only visible attributes. That can make the model look as if income, age, or education are doing more explanatory work than they really are.
+    </p>
+
+    <p>
+      With the latent variable, the model better reflects the actual decision process: willingness-to-pay depends not only on financial capacity, but also on beliefs, trust, priorities, and perceived institutional credibility.
+    </p>
+
+    <p>
+      In this project, adding a latent attitudinal component improved explanatory power and produced a more interpretable model.
+    </p>
+
+    <h2>The broader lesson</h2>
+
+    <p>
+      This issue appears far beyond environmental economics.
+    </p>
+
+    <p>
+      Credit models try to infer borrower quality from observed behavior. Recommendation systems infer preferences from clicks and purchases. Financial models infer information from trades and prices.
+    </p>
+
+    <p>
+      In each case, the quantity of interest is hidden. What we observe are indirect traces.
+    </p>
+
+    <p>
+      A common mistake in applied modeling is to assume that the variables in the dataset are the variables that matter. Often, they are only proxies.
+    </p>
+
+    <p>
+      Sometimes the most important variable in the model is the one that never appeared in the dataset.
+    </p>
+
+    <p><a href="/blog/">← Back to Blog</a></p>
+  </article>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <p>© 2026 Angad Bhatti. Research website hosted on GitHub Pages.</p>
+  </div>
+</footer>
+
+</body>
+</html>
