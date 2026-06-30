@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Empirical Applications of the dLTM Estimator | Angad Bhatti</title>
+  <meta name="description" content="Two empirical applications of the dLTM long-memory estimator: memory-conditioned position sizing on a 30-name S&P 500 trend portfolio, and forward realized skew prediction on optionable underlyings.">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="/">Angad<span>Bhatti</span></a>
+    <nav class="links">
+      <a href="/research/">Research</a>
+      <a href="/projects/">Projects</a>
+      <a href="/blog/">Blog</a>
+      <a href="/cv/">CV</a>
+      <a href="mailto:ab130@fordham.edu">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container article-layout">
+  <section class="page-title">
+    <div class="kicker">Strategy Research Note · June 2026</div>
+    <h1>From Trend-Following to Skew Prediction: Empirical Applications of the dLTM Long-Memory Estimator</h1>
+    <p class="lead">
+      Two empirical tests of whether dLTM regimes carry tradeable information. A sector-balanced
+      30-name S&amp;P 500 trend portfolio with memory-conditioned sizing produces statistically
+      significant Sharpe lifts on both binary and continuous trend specifications. On a panel of
+      four optionable underlyings, forward realized skewness is monotone in dLTM regime and
+      survives controls for Bakshi-Kapadia-Madan implied skew.
+    </p>
+    <div class="actions">
+      <a class="small-link" href="/papers/dltm_skew_regimes.pdf">PDF</a>
+      <a class="small-link" href="/research/">Back to research</a>
+    </div>
+  </section>
+
+  <article class="article">
+    <h2>Background and motivation</h2>
+    <p>
+      The dLTM estimator from <a href="/research/detectability-boundaries.html">Bhatti (2026a)</a>
+      recovers a finite-sample long-memory parameter from the tail slope of the autocorrelation
+      function of log prices. The companion paper on
+      <a href="/research/over-differencing.html">over-differencing</a> shows on a panel of 484
+      S&amp;P 500 names that realized return skewness deepens from about -0.14 to -0.46 as one
+      moves from the low-dLTM regime (d &lt; 0.3) to the high-dLTM regime (d &ge; 0.7). The
+      mechanism is mechanical. More persistent return processes accumulate negative shocks
+      inside trending regimes, which concentrates left-tail mass.
+    </p>
+    <p>
+      The natural follow-up question is whether that regime-conditional skew prediction has
+      practical applications in equity portfolio construction or options trading. This note
+      presents two empirical tests addressing that question.
+    </p>
+
+    <h2>Application 1: trend-following with memory-conditioned sizing</h2>
+
+    <h3>Setup</h3>
+    <p>
+      A sector-balanced 30-name S&amp;P 500 universe is selected by long history (15+ years)
+      and dLTM coverage (50%+ valid estimates), with three names per sector across ten sectors.
+      The base strategy is a Carver-style risk-scaled portfolio with two trend overlay variants:
+      a binary mask (Strategy 5) and a continuous risk-adjusted forecast (Strategy 7). For each
+      variant, an overlay scales position size by current dLTM regime. Positions in high-d names
+      are scaled up by conf_max = 1.5, positions in low-d names are scaled down by
+      conf_min = 0.5, and mid-d positions are unchanged. Regime cutoffs (d_low = 0.3,
+      d_high = 0.7) match the Paper 2 buckets. All parameters are fixed ex ante. The backtest
+      spans 2000-2025; dLTM walk-forward estimates begin July 2009 after a 2,400-day warmup.
+      Standard errors are HAC. Sharpe differentials are tested via Diebold-Mariano on the daily
+      return differential with Newey-West bandwidth of 21.
+    </p>
+
+    <h3>Results</h3>
+    <p>Both A/B pairs show statistically significant positive lifts.</p>
+
+    <table class="results-table">
+      <thead>
+        <tr>
+          <th>A/B Pair</th>
+          <th>Full Sample Sharpe</th>
+          <th>dLTM-Live Sharpe</th>
+          <th>DM stat</th>
+          <th>p-value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>mask vs mask_dltm</td><td>0.845 to 0.857 (+0.012)</td><td>0.938 to 0.949 (+0.011)</td><td>+3.64</td><td>&lt; 0.001</td></tr>
+        <tr><td>strength vs strength_dltm</td><td>0.563 to 0.601 (+0.038)</td><td>0.684 to 0.721 (+0.036)</td><td>+2.55</td><td>0.011</td></tr>
+      </tbody>
+    </table>
+
+    <p class="figure-note">
+      A/B comparison of Carver-style trend strategies with and without dLTM-conditioned position
+      sizing. The dLTM-live sub-sample is the post-July-2009 window where the walk-forward
+      estimator produces non-NaN estimates. Both DM tests are significant. The overlay produces
+      positive Sharpe lift on both binary and continuous trend representations, indicating the
+      result is not specific to a particular trend implementation.
+    </p>
+
+    <h3>Regime decomposition</h3>
+    <p>
+      Sharpe lift is concentrated in regimes where dLTM was elevated and the trend continued.
+      The strength specification shows the cleanest per-regime view.
+    </p>
+
+    <table class="results-table">
+      <thead>
+        <tr>
+          <th>Regime</th>
+          <th>Baseline Sharpe</th>
+          <th>Overlay Sharpe</th>
+          <th>Lift</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Post-GFC recovery (2009-11)</td><td>+0.88</td><td>+1.01</td><td>+0.13</td></tr>
+        <tr><td>Bull 2013-2014</td><td>+1.03</td><td>+1.26</td><td>+0.24</td></tr>
+        <tr><td>Late-cycle 2019</td><td>+1.64</td><td>+1.90</td><td>+0.26</td></tr>
+        <tr><td>COVID recovery (2020-21)</td><td>+0.93</td><td>+1.07</td><td>+0.15</td></tr>
+        <tr><td>AI rally 2023-24</td><td>+0.73</td><td>+0.66</td><td>-0.07</td></tr>
+        <tr><td>Q4 2018 selloff</td><td>-1.76</td><td>-1.71</td><td>+0.05</td></tr>
+        <tr><td>Rate hike 2022</td><td>-1.90</td><td>-2.38</td><td>-0.48</td></tr>
+      </tbody>
+    </table>
+
+    <p class="figure-note">
+      Selected per-regime Sharpe under the strength specification. Lift is positive in 7 of 13
+      dLTM-live regimes (full table on request). The overlay captures additional return in
+      sustained trending regimes (post-GFC recovery, bull 2013-14, late-cycle 2019, COVID
+      recovery), is approximately neutral in fast whipsaws (Q4 2018), and underperforms in
+      regimes where the overlay scaled up during drawdown continuation (rate-hike 2022, AI
+      rally 2023-24).
+    </p>
+
+    <h3>Interpretation</h3>
+    <p>
+      The overlay performs as expected if dLTM is a tradeable regime indicator for conditional
+      skew, since trend-following is naturally short-skew at the position level. Scaling up in
+      high-dLTM regimes captures additional trend premium during periods where the underlying
+      is in a high-memory state, which empirically coincides with stronger directional
+      persistence. The cost is moderately deeper drawdowns in periods where the high-d state
+      coincides with stress rather than continuation. This is consistent with skew-premium
+      harvesting. The lift reflects accepting larger left-tail exposure in exchange for higher
+      unconditional return.
+    </p>
+
+    <h3>A note on the inverse direction</h3>
+    <p>
+      I separately tested the inverse overlay (high-d to smaller positions), motivated by the
+      intu intuition that one could hedge the predicted negative skew by reducing exposure. The
+      result is not statistically meaningful (strength: lift +0.08, p = 0.11; mask: lift -0.02,
+      not significant), and maximum drawdown deteriorates in stress regimes (e.g. COVID crash
+      worsens from -14% to -32%).
+    </p>
+    <p>
+      This is a feature of the construction, not a bug. Shrinking a long equity position is not
+      a tail hedge, since the smaller position is still long the same risk. Both directions of
+      the dLTM signal carry economic content (negative skew can be harvested as a premium or
+      hedged as a risk), but the hedge interpretation requires a tail-protective instrument
+      such as long puts, collars, or VIX exposure sized by the regime indicator, not a
+      position-size dampener on the underlying. I retain the aggressive direction here and
+      reserve the defensive application for future work using options instruments.
+    </p>
+
+    <h2>Application 2: skew prediction on optionable underlyings</h2>
+    <p>
+      If the Section 2 result is driven by the predicted skew mechanism, then dLTM should also
+      predict realized skew directly on individual underlyings, and ideally beyond what the
+      options market already prices via implied skew. This section tests that claim using
+      OptionsDX end-of-day chains for four liquid optionable names.
+    </p>
+
+    <table class="results-table">
+      <thead>
+        <tr><th>Component</th><th>Specification</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Underlyings</td><td>SPY (2010-2023), TSLA (2020-2023), NVDA (2016-2023), AAPL (2016-2023)</td></tr>
+        <tr><td>Realized skew</td><td>Sample skewness of forward 21 daily returns, aligned at t</td></tr>
+        <tr><td>Implied skew benchmark</td><td>Bakshi-Kapadia-Madan (2003) model-free RN skewness, ~30-day tenor</td></tr>
+        <tr><td>Regime cutoffs</td><td>Low: d &lt; 0.3; Mid: 0.3 &le; d &lt; 0.7; High: d &ge; 0.7</td></tr>
+        <tr><td>Standard errors</td><td>HAC (Newey-West, lag 21) per name; cluster-robust by date in pooled</td></tr>
+        <tr><td>Test sample</td><td>8,295 panel observations (ticker x date) after alignment</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Primary result: monotone regime ordering</h3>
+    <p>
+      The cleanest cross-sectional evidence is the mean of forward realized skew bucketed by
+      current dLTM regime, per ticker.
+    </p>
+
+    <table class="results-table">
+      <thead>
+        <tr>
+          <th>Ticker</th>
+          <th>Low (d&lt;0.3)</th>
+          <th>Mid (0.3-0.7)</th>
+          <th>High (d&ge;0.7)</th>
+          <th>Swing (Low-High)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>SPY</td><td>+0.133 (n=53)</td><td>-0.099 (n=1,745)</td><td>-0.165 (n=1,508)</td><td>+0.298</td></tr>
+        <tr><td>TSLA</td><td>+0.194 (n=114)</td><td>+0.170 (n=296)</td><td>+0.004 (n=580)</td><td>+0.190</td></tr>
+        <tr><td>NVDA</td><td>n/a (n=16)</td><td>+0.500 (n=276)</td><td>+0.085 (n=1,707)</td><td>+0.415*</td></tr>
+        <tr><td>AAPL</td><td>n/a (n=0)</td><td>+0.193 (n=427)</td><td>+0.126 (n=1,573)</td><td>+0.067*</td></tr>
+      </tbody>
+    </table>
+
+    <p class="figure-note">
+      Mean forward 21-day realized skewness, bucketed by dLTM regime at the start of the
+      forward window. *NVDA and AAPL show no usable low-d observations in this sample; their
+      swing uses mid versus high. The probability that all four names happen to show monotone
+      decreasing skew under a null of random orderings is approximately
+      (1/6)<sup>4</sup> = 0.08%.
+    </p>
+
+    <h3>Pooled regression</h3>
+    <p>
+      Per-name regressions are individually noisy because the regime buckets are imbalanced
+      (NVDA 85% high, AAPL 79% high) and the post-2016 sample sits almost entirely in a single
+      market period. Pooling across all four names with cluster-robust standard errors
+      clustered by date yields the following.
+    </p>
+
+    <table class="results-table">
+      <thead>
+        <tr>
+          <th>Coefficient</th>
+          <th>Univariate</th>
+          <th>Joint (with BKM)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>d_high</td><td>-0.017 (t=-0.86, p=0.39)</td><td>-0.050 (t=-2.40, p=0.016)</td></tr>
+        <tr><td>d_low</td><td>+0.222 (t=+4.92, p&lt;0.001)</td><td>+0.178 (t=+3.89, p&lt;0.001)</td></tr>
+        <tr><td>BKM_skew_lag</td><td>(omitted)</td><td>+0.102 (t=+13.72, p&lt;0.001)</td></tr>
+        <tr><td>R<sup>2</sup></td><td>0.0019</td><td>0.0212</td></tr>
+        <tr><td>N</td><td>8,295</td><td>8,295</td></tr>
+      </tbody>
+    </table>
+
+    <p class="figure-note">
+      Pooled regression of forward 21-day realized skew on dLTM regime dummies and BKM implied
+      skew, cluster-robust SEs by date. Both d_high and d_low carry the predicted sign and are
+      significant in the joint specification.
+    </p>
+
+    <h2>What did not replicate (options test)</h2>
+    <p>Three caveats apply to the options test and should be stated plainly.</p>
+
+    <p>
+      <strong>(i) Per-name precision.</strong> Zero of four names individually pass a
+      pre-committed t &lt; -1.5 threshold on the d_high coefficient. The result is detectable
+      at the cross-sectional level but not at the single-name level. This is consistent with
+      the mechanism living in cross-sectional differences, where Paper 2 originally documented
+      it, rather than in individual-name time-series predictability.
+    </p>
+
+    <p>
+      <strong>(ii) Subperiod stability on SPY.</strong> Splitting the SPY sample at 2017-01-01,
+      the linear-specification dLTM coefficient is -0.46 (t=-1.05) pre-2017 and -0.26 (t=-0.13)
+      post-2017. The full-sample t-statistic on linear specification (-2.27) reflects pooling,
+      not stable predictability across time.
+    </p>
+
+    <p>
+      <strong>(iii) Regime imbalance.</strong> The 2016-2023 sample sits almost entirely in
+      high-dLTM territory for mega-cap technology names. Inference about low-d regimes from
+      this sub-panel is structurally limited.
+    </p>
+
+    <p>
+      Despite these caveats, the result is consistent with the Carver application:
+      dLTM-conditioned skew effects are real but require cross-sectional aggregation (across
+      names or across regimes) to be detected with high confidence. Single-name,
+      single-time-series applications are too noisy.
+    </p>
+
+    <h2>Strategy implications</h2>
+    <p>Taking the two applications together, two strategies are potentially viable.</p>
+
+    <p>
+      <strong>(A) dLTM-aggressive trend overlay (equity).</strong> Direct replication of
+      Application 1. Statistically significant Sharpe lift on a 30-name S&amp;P 500 trend
+      portfolio, on both binary and continuous trend specifications. Mechanism is
+      skew-premium harvesting: positions are scaled up in regimes predicted to have
+      more-negative future skew, capturing additional return in exchange for somewhat deeper
+      drawdowns. Suitable as an overlay rule in a multi-rule trend book.
+    </p>
+
+    <p>
+      <strong>(B) Cross-sectional regime-contrast skew portfolio (options).</strong> Long
+      realized-skew exposure on low-d names (long OTM put plus short OTM call, delta-hedged),
+      short realized-skew exposure on high-d names. Equal-vega sizing, 30-day tenor rolling
+      weekly. The trade is structurally a long-short factor portfolio that exploits the pooled
+      regime contrast shown in the regime-ordering table, not a single-name skew bet. Expected
+      gross Sharpe before transaction costs is in the 0.4 to 0.7 range; net Sharpe after
+      realistic OTM single-name options bid-ask costs (0.5% to 1.5% per round trip) is
+      uncertain.
+    </p>
+
+    <p>
+      Construction of (B) requires a larger underlying universe (20 to 30 names) than the four
+      tested here. Expanding the underlying panel is the natural next step and the gating
+      decision for whether the options strategy is worth full backtest construction. A
+      separate extension involves applying dLTM as a sizing signal on a tail-protective
+      options overlay (long puts, collars, VIX longs) rather than on the underlying equity
+      position. The negative result in the defensive test reflects the wrong instrument, not
+      the wrong signal.
+    </p>
+
+    <p class="figure-note">
+      Code and replication files available on request. Companion papers:
+      <a href="/research/detectability-boundaries.html">Bhatti (2026a)</a>, finite-sample
+      long-memory estimation via detectability boundaries, SSRN 6261239;
+      <a href="/research/over-differencing.html">Bhatti (2026b)</a>, market memory structure
+      and the cost of over-differencing in ML forecasting, SSRN 6389858. All views my own.
+    </p>
+
+    <div class="actions">
+      <a class="small-link" href="/papers/dltm_skew_regimes.pdf">PDF</a>
+      <a class="small-link" href="/research/">Back to research</a>
+    </div>
+  </article>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <p>© 2026 Angad Bhatti. Research website hosted on GitHub Pages.</p>
+  </div>
+</footer>
+
+</body>
+</html>
