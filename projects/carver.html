@@ -28,8 +28,8 @@
       <div class="kicker">Systematic Futures · Risk Management · Trend Following</div>
       <h1>Systematic Futures Portfolio Construction</h1>
       <p class="lead">
-        A Carver-style implementation focused on futures back-adjustment, volatility targeting,
-        risk parity, covariance estimation, trend overlays, leverage, and drawdown-aware strategy evaluation.
+        A Carver-style system on 31 futures (2005–2025): volatility targeting, risk parity, covariance estimation,
+        long-only trend-strength sizing, and drawdown-aware evaluation. Sharpe 1.04 over twenty years, 1.48 since 2020.
       </p>
     </div>
   </section>
@@ -48,10 +48,12 @@
 
         <h2>Data construction and futures adjustment</h2>
         <p>
-          A key implementation issue is that futures prices must be back-adjusted correctly. I used continuous
-          back-adjusted futures logic, including the Panama-style adjustment, so that roll gaps, dividends, and
-          interest-related effects are not incorrectly treated as trading losses. The point is to measure the
-          economic return from holding the futures strategy, not artificial jumps caused by contract rolls.
+          A key implementation issue is that roll gaps must not be booked as P&amp;L. The data are Yahoo Finance
+          front-month series, which jump when one contract expires and the next takes over. I built an exchange roll
+          calendar (first-notice and last-trade dates for every contract) and neutralised the return on each roll day,
+          so the backtest measures the economic return from holding the futures, not artificial jumps caused by
+          contract rolls. True Panama back-adjustment would need individual contract prices, which this data source
+          does not provide.
         </p>
 
         <p>
@@ -63,8 +65,9 @@
 
         <h2>Risk metrics and evaluation principles</h2>
         <p>
-          I evaluated strategies using both Sharpe and Sortino ratios. Sharpe subtracts the risk-free rate and divides
-          by total volatility, so it penalizes both upside and downside volatility. Sortino is useful as a complement
+          I evaluated strategies using both Sharpe and Sortino ratios. Sharpe uses a 0% risk-free rate: futures prices
+          already embed the financing cost, so futures P&amp;L is an excess return, and the cash posted as margin earns
+          the risk-free rate on top. Sharpe divides by total volatility, so it penalizes both upside and downside volatility. Sortino is useful as a complement
           because it focuses on downside volatility and helps detect negative skew.
         </p>
 
@@ -122,9 +125,11 @@ contract leverage ratio = notional exposure per contract / capital</code></pre>
 
         <h2>Trend overlay</h2>
         <p>
-          The trend overlay uses MACD-style exponentially weighted moving average signals. My interpretation is that
-          these trend indicators work better for long-position filtering than for aggressive shorting. Instead of using
-          a negative trend signal to force a large short, the more robust use is often to close or reduce long exposure.
+          The trend overlay uses a slow exponentially weighted moving average crossover (64/256 days), divided by price
+          volatility so trend strength is comparable across markets, scaled and capped at ±20. Each portfolio position is
+          multiplied by this forecast, so strong trends get more risk and weak trends less. My interpretation is that
+          these indicators work better for sizing longs than for shorting: the forecast is floored at zero, so a long
+          fades out as its trend dies instead of flipping into a short.
         </p>
 
         <p>
@@ -146,116 +151,142 @@ contract leverage ratio = notional exposure per contract / capital</code></pre>
 
         <h2>Backtest results</h2>
         <p>
-          I evaluated multiple strategy variants and volatility targets. The strongest 20-year comparison was between
-          a higher-volatility and lower-volatility target after transaction costs of 0.05% per trade.
+          The final system runs on 31 liquid futures across six asset classes (equity indices, rates, energy, metals,
+          grains and softs, livestock) from 2005 to mid-2025, after a cost of 5 bp per unit of position change. Settings
+          were chosen on 2005–2016 only; 2017–2025 is the out-of-sample check.
         </p>
 
         <table class="results-table">
           <thead>
-            <tr>
-              <th>Volatility Target</th>
-              <th>Total Return</th>
-              <th>CAGR</th>
-              <th>Volatility</th>
-              <th>Sharpe</th>
-              <th>Max Drawdown</th>
-              <th>Trades</th>
-            </tr>
+            <tr><th>Final system</th><th>Sharpe</th><th>CAGR</th><th>Volatility</th><th>Max Drawdown</th></tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Higher target</td>
-              <td>19.69×</td>
-              <td>15.93%</td>
-              <td>21.91%</td>
-              <td>0.784</td>
-              <td>-51.5%</td>
-              <td>2,549</td>
-            </tr>
-            <tr>
-              <td>Lower target</td>
-              <td>6.38×</td>
-              <td>10.24%</td>
-              <td>14.15%</td>
-              <td>0.760</td>
-              <td>-38.0%</td>
-              <td>1,632</td>
-            </tr>
+            <tr><td>2005–2025</td><td>1.04</td><td>11.8%</td><td>11.3%</td><td>-26.9%</td></tr>
+            <tr><td>In-sample 2005–2016</td><td>0.89</td><td>9.4%</td><td>10.7%</td><td>-20.3%</td></tr>
+            <tr><td>Out-of-sample 2017–2025</td><td>1.23</td><td>15.2%</td><td>12.1%</td><td>-26.9%</td></tr>
+            <tr><td>Since 2020</td><td>1.48</td><td>19.8%</td><td>12.7%</td><td>-13.0%</td></tr>
           </tbody>
         </table>
 
+        <h2>What each layer contributes</h2>
+        <table class="results-table">
+          <thead>
+            <tr><th>Strategy</th><th>Measured as</th><th>Sharpe</th><th>Max Drawdown</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>S1 Buy &amp; hold</td><td>average single market</td><td>0.30</td><td>-62%</td></tr>
+            <tr><td>S2 Constant vol target</td><td>average single market</td><td>0.29</td><td>-63%</td></tr>
+            <tr><td>S3 Variable vol target</td><td>average single market</td><td>0.23</td><td>-68%</td></tr>
+            <tr><td>S4 Portfolio risk parity</td><td>portfolio</td><td>0.73</td><td>-49.5%</td></tr>
+            <tr><td>S6/7 S4 + trend-strength sizing</td><td>portfolio (final)</td><td>1.04</td><td>-26.9%</td></tr>
+          </tbody>
+        </table>
         <p>
-          The key interpretation is that higher risk targets raised CAGR and total return, but also increased drawdown
-          depth and trading frequency. The Sharpe ratio stayed broadly similar across the targets, suggesting that the
-          trade-off was mainly risk appetite and leverage, not a radically different source of alpha.
+          A single market earns a Sharpe ratio of about 0.3 however it is sized; combining the same markets with
+          correlation-aware sizing more than doubles it. Sizing each long by the strength of its trend then lifts the
+          book to 1.04 and halves the drawdown: risk goes to markets that are trending, and a position fades towards
+          zero as its trend dies, so the book steps out of falling markets without ever shorting them (2008: +3.6%).
+        </p>
+
+        <h2>Does trend sizing add value?</h2>
+        <p>
+          Regressing monthly returns of the final system on the risk-scaled portfolio it is built on (HAC standard
+          errors) gives an alpha of 0.44% a month, t = 3.13, with beta 0.45; since 2020 the alpha is 0.57% a month,
+          t = 3.00. A binary trend mask, by contrast, was statistically indistinguishable from the plain portfolio, and
+          letting the same signal go short lowered Sharpe in every test. Trend works here as a way to size longs, not
+          as a reason to short.
+        </p>
+
+        <h2>Volatility target is a leverage dial</h2>
+        <table class="results-table">
+          <thead>
+            <tr><th>Volatility Target</th><th>CAGR</th><th>Volatility</th><th>Sharpe</th><th>Max Drawdown</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>20%</td><td>11.8%</td><td>11.3%</td><td>1.04</td><td>-26.9%</td></tr>
+            <tr><td>40%</td><td>23.3%</td><td>22.6%</td><td>1.04</td><td>-48.0%</td></tr>
+            <tr><td>60%</td><td>34.2%</td><td>34.0%</td><td>1.04</td><td>-64.0%</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Sharpe is identical at every target: return and drawdown scale together. Sharpe is the quantity to improve;
+          the target is chosen afterwards. Realised volatility sits near half the target because trend sizing holds
+          less than full risk most of the time.
+        </p>
+
+        <h2>More markets only help when they bring an edge</h2>
+        <table class="results-table">
+          <thead>
+            <tr><th>Universe</th><th>Effective bets</th><th>Average correlation</th><th>Sharpe</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>21 markets</td><td>18.1</td><td>0.08</td><td>0.88</td></tr>
+            <tr><td>31 markets (+10 drift sectors)</td><td>27.7</td><td>0.07</td><td>1.04</td></tr>
+            <tr><td>35 markets (+ bonds and currencies)</td><td>29.7</td><td>0.06</td><td>1.01</td></tr>
+            <tr><td>35 markets (+ 8 more commodities)</td><td>33.1</td><td>0.08</td><td>1.05</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Going from 21 to 31 markets added real diversification. Past about 30 markets, more assets added nothing:
+          bonds and currencies lower correlation but carry no edge for a long-biased trend book, and extra commodities
+          are partly near-copies of markets already held. Diversification multiplies an edge; it cannot create one.
         </p>
 
         <h2>Regime behavior</h2>
         <p>
-          The strategy tended to perform better during post-shock volatility normalization than during long quiet trends.
-          Rolling Sharpe peaks clustered after 2008–09, 2011, and the post-COVID period. The likely mechanism is that
-          volatility targeting stabilizes risk when volatility is high but falling, while the trend overlay avoids some
-          whipsaw losses and re-engages as structure returns.
+          The book steps aside in slow bear markets but is caught by sudden crashes: in 2008 it returned
+          +3.6% while the S&amp;P 500 fell 37%, whereas the COVID crash cost 9.5% before the slow trend signal could react.
+          Inflationary and reflationary regimes paid most (2021: +40%, 2022: +18.5%). The worst drawdown, January 2018
+          to March 2020, was a choppy period followed by COVID.
         </p>
 
+        <h2>Market memory predicts the left tail</h2>
         <p>
-          This suggests the strategy is best suited for volatility normalization and trend resumption regimes. In extended
-          calm periods, risk targeting must be monitored carefully because quiet markets can encourage large positions
-          right before stress events.
-        </p>
-
-        <h2>MACD mask diagnostic</h2>
-        <p>
-          To test whether the MACD trend mask added genuine incremental performance, I regressed the MACD-overlay
-          monthly returns against the baseline volatility-sizing strategy. The estimated monthly alpha was about
-          0.0504%, or roughly 0.61% annualized, with t-statistic 1.24 and p-value 0.2134.
-        </p>
-
-        <p>
-          The beta was approximately 0.98 and R² about 0.988, meaning the overlay largely tracked the baseline.
-          I therefore interpret the MACD mask as a marginal risk-control adjustment rather than a strong standalone
-          alpha source.
+          Linking this to my long-memory research: averaging each S&amp;P 500 stock's walk-forward
+          <a href="/research/dltm_skew_regimes.html">d<sub>LTM</sub></a> estimate gives a market memory state. After
+          high-memory months, the next month of the futures book has skewness of -1.42 and a worst month of -11.2%;
+          after low-memory months, -0.43 and -4.4%. The ranking holds under three definitions of the state and with
+          the COVID months removed. It predicts tail risk, not returns. Halving the book when market memory is in its
+          top third cut the 2013–2025 maximum drawdown from -26.9% to -16.9%, with Sharpe 1.14 → 1.19 and skewness
+          -0.85 → -0.56.
         </p>
 
         <h2>Return distribution diagnostics</h2>
         <table class="results-table">
           <thead>
-            <tr>
-              <th>Statistic</th>
-              <th>Value</th>
-            </tr>
+            <tr><th>Statistic</th><th>Value</th></tr>
           </thead>
           <tbody>
-            <tr><td>Mean daily return</td><td>0.000345</td></tr>
-            <tr><td>Daily volatility</td><td>0.006743</td></tr>
-            <tr><td>Skewness</td><td>0.2548</td></tr>
-            <tr><td>Excess kurtosis</td><td>7.2336</td></tr>
-            <tr><td>Min / Max daily return</td><td>-4.24% / +6.81%</td></tr>
-            <tr><td>VaR95 / VaR99</td><td>-1.00% / -1.83%</td></tr>
-            <tr><td>CVaR95 / CVaR99</td><td>-1.54% / -2.48%</td></tr>
-            <tr><td>Median daily return</td><td>0.000479</td></tr>
+            <tr><td>Mean / median daily return</td><td>0.047% / 0.049%</td></tr>
+            <tr><td>Daily volatility</td><td>0.71%</td></tr>
+            <tr><td>Skewness</td><td>-0.70</td></tr>
+            <tr><td>Excess kurtosis</td><td>6.02</td></tr>
+            <tr><td>Min / Max daily return</td><td>-7.7% / +4.1%</td></tr>
+            <tr><td>VaR95 / VaR99</td><td>-1.08% / -2.14%</td></tr>
+            <tr><td>CVaR95 / CVaR99</td><td>-1.74% / -2.87%</td></tr>
+            <tr><td>Annualized Sortino</td><td>1.30</td></tr>
+            <tr><td>Tail ratio (95th / 5th percentile)</td><td>1.11</td></tr>
+            <tr><td>Hit rate</td><td>55.1%</td></tr>
+            <tr><td>Profit factor</td><td>1.21</td></tr>
+            <tr><td>ACF(1)</td><td>0.069, weak positive serial correlation</td></tr>
           </tbody>
         </table>
 
-        <h2>Risk, payoff, and diagnostics</h2>
-        <table class="results-table">
-          <thead>
-            <tr>
-              <th>Diagnostic</th>
-              <th>Value / Interpretation</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>Downside volatility</td><td>0.004852</td></tr>
-            <tr><td>Annualized Sortino</td><td>1.128</td></tr>
-            <tr><td>Tail ratio</td><td>0.985</td></tr>
-            <tr><td>Hit rate</td><td>54.06%</td></tr>
-            <tr><td>Average up / down day</td><td>+0.464% / -0.471%</td></tr>
-            <tr><td>Profit factor</td><td>1.159</td></tr>
-            <tr><td>Jarque-Bera p-value</td><td>≈ 0, reject normality</td></tr>
-            <tr><td>ACF(1)</td><td>0.0577, weak positive serial correlation</td></tr>
-          </tbody>
-        </table>
+        <h2>Robustness on crypto</h2>
+        <p>
+          The risk-scaled portfolio (S4), with its futures parameters unchanged, run on 12 liquid spot coins from January
+          2023 to November 2025, returned a Sharpe ratio of 1.04 with a maximum drawdown of -21.4%. The sample is under
+          three years, so this is evidence that the risk machinery transfers, not a track record. An earlier version of
+          the crypto study is written up <a href="/projects/carver-crypto.html">here</a>.
+        </p>
+
+        <h2>Limitations</h2>
+        <ul>
+          <li>Yahoo Finance front-month series; contract-roll days are neutralised from an exchange roll calendar, an approximation of true back-adjustment.</li>
+          <li>A flat 5 bp cost on every market, with no slippage or capacity model.</li>
+          <li>Only markets Yahoo still lists back to 2005, and the 31-market universe was chosen after comparing others.</li>
+          <li>Long-biased: sudden gap-down crashes hit before slow trend signals react.</li>
+        </ul>
 
         <h2>Strategy selection lessons</h2>
         <p>
@@ -272,16 +303,18 @@ contract leverage ratio = notional exposure per contract / capital</code></pre>
 
         <h2>Recommendations</h2>
         <ul>
-          <li>Use target volatility in the 10–16% range if the goal is to keep drawdowns below roughly 40%.</li>
-          <li>Use adaptive targets carefully: higher after volatility shocks, lower during extended calm periods.</li>
-          <li>Maintain blended volatility and covariance estimates to avoid crisis-period overexposure.</li>
-          <li>Track performance by regime, not only full-sample performance.</li>
+          <li>Size longs by trend strength rather than filtering by trend direction, and do not short on the same signal.</li>
+          <li>Add markets that bring their own edge; past about 30 markets, more assets added no profit.</li>
+          <li>Choose the volatility target after optimizing Sharpe: Sharpe was unchanged across targets while drawdowns scaled.</li>
+          <li>Smooth the portfolio leverage factor and blend covariance horizons to avoid cutting risk at the bottom of a shock.</li>
+          <li>Cut risk when market-wide long memory is high: it predicted the book's fattest left tails.</li>
           <li>Delay trading or preserve initial weights until lookback windows are properly populated.</li>
         </ul>
 
         <h2>Links</h2>
         <div class="actions">
           <a class="small-link" href="https://github.com/Abhatti-123123/carver" target="_blank">GitHub Repository →</a>
+          <a class="small-link" href="https://github.com/Abhatti-123123/carver/raw/main/carver_presentation.pptx" target="_blank">Presentation (PowerPoint) →</a>
         </div>
 
       </article>

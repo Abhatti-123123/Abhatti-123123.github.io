@@ -166,6 +166,35 @@
       reserve the defensive application for future work using options instruments.
     </p>
 
+    <h2>Update: applied to the Carver futures system</h2>
+    <p>
+      I re-ran Application 1 on my final <a href="/projects/carver.html">Carver system</a> (risk-parity portfolio
+      with long-only trend-strength sizing) and added two tests.
+    </p>
+    <p>
+      <strong>A leverage-neutral version of the overlay.</strong> Because high-d name-days outnumber low-d ones roughly
+      eight to one, the x1.5 / x0.5 overlay is on average a leverage increase (mean multiplier 1.24), so part of its
+      return lift is leverage. Rescaling the multipliers to average one across names every day leaves a pure tilt
+      toward high-memory names at unchanged total risk. On the 30-name universe in the dLTM-live window (2011–2025)
+      it raises Sharpe from 0.783 to 0.809 at the same volatility (13.2% vs 13.7%); Diebold-Mariano +2.13, p = 0.03.
+      The signal survives without added leverage.
+    </p>
+    <p>
+      <strong>Market-wide memory as a tail-risk state for a multi-asset book.</strong> Averaging d* across about 460
+      S&amp;P 500 names gives a market memory state. Measured against its own one-year average and bucketed into
+      terciles using only past data, it predicts the next month of the 31-market futures book: skewness -1.42 and
+      worst month -11.2% after high-memory months, versus -0.43 and -4.4% after low-memory months. The ranking holds
+      under three state definitions and with the COVID months removed; it predicts tail risk, not returns. Halving the
+      book when the state is in its top tercile cut the 2013–2025 maximum drawdown from -26.9% to -16.9%, with Sharpe
+      1.14 to 1.19.
+    </p>
+    <p>
+      This does not contradict the inverse-direction result above. That test shrank individual high-d equity
+      positions, which leaves the book long the same equity risk. Here a market-level state de-risks a diversified
+      book of futures across six asset classes before the tail months the state flags. Evidence covers 2013–2025, and
+      high-memory months cluster in 2014–2020, so this is a promising result rather than a settled one.
+    </p>
+
     <h2>Application 2: skew prediction on optionable underlyings</h2>
     <p>
       If the Section 2 result is driven by the predicted skew mechanism, then dLTM should also
