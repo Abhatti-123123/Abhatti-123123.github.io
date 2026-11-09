@@ -240,15 +240,14 @@ contract leverage ratio = notional exposure per contract / capital</code></pre>
           to March 2020, was a choppy period followed by COVID.
         </p>
 
-        <h2>Market memory predicts the left tail</h2>
+        <h2>Long memory as an asset-level skew signal</h2>
         <p>
-          Linking this to my long-memory research: averaging each S&amp;P 500 stock's walk-forward
-          <a href="/research/dltm_skew_regimes.html">d<sub>LTM</sub></a> estimate gives a market memory state. After
-          high-memory months, the next month of the futures book has skewness of -1.42 and a worst month of -11.2%;
-          after low-memory months, -0.43 and -4.4%. The ranking holds under three definitions of the state and with
-          the COVID months removed. It predicts tail risk, not returns. Halving the book when market memory is in its
-          top third cut the 2013–2025 maximum drawdown from -26.9% to -16.9%, with Sharpe 1.14 → 1.19 and skewness
-          -0.85 → -0.56.
+          Linking this to my long-memory research: across S&amp;P 500 stocks, on the same date, higher walk-forward
+          <a href="/research/dltm_skew_regimes.html">d<sub>LTM</sub></a> means more negative next-month skewness
+          (Fama-MacBeth slope t = -4.6, significant in both 2011–2019 and 2020–2025), so the effect is not an artefact of
+          one period. Memory says which assets carry fat left tails. Used that way, a leverage-neutral tilt toward
+          high-memory names raises the final system's Sharpe on a 30-stock universe from 0.783 to 0.809 at the same
+          volatility (Diebold-Mariano p = 0.03).
         </p>
 
         <h2>Return distribution diagnostics</h2>
@@ -307,7 +306,7 @@ contract leverage ratio = notional exposure per contract / capital</code></pre>
           <li>Add markets that bring their own edge; past about 30 markets, more assets added no profit.</li>
           <li>Choose the volatility target after optimizing Sharpe: Sharpe was unchanged across targets while drawdowns scaled.</li>
           <li>Smooth the portfolio leverage factor and blend covariance horizons to avoid cutting risk at the bottom of a shock.</li>
-          <li>Cut risk when market-wide long memory is high: it predicted the book's fattest left tails.</li>
+          <li>Tilt risk toward high-memory assets at unchanged total risk: memory flags which assets carry fat left tails.</li>
           <li>Delay trading or preserve initial weights until lookback windows are properly populated.</li>
         </ul>
 

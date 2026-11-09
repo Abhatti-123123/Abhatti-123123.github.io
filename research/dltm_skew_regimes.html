@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Empirical Applications of the dLTM Estimator | Angad Bhatti</title>
-  <meta name="description" content="Empirical applications of the dLTM long-memory estimator: memory-conditioned sizing on a 30-name S&P 500 trend portfolio, market memory as a tail-risk state for a futures book, and forward realized skew prediction on optionable underlyings.">
+  <meta name="description" content="Empirical applications of the dLTM long-memory estimator: cross-sectional skew prediction and a memory tilt in a 30-name S&P 500 trend portfolio, and forward realized skew prediction on optionable underlyings.">
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
@@ -27,12 +27,11 @@
     <div class="kicker">Strategy Research Note · June 2026, updated November 2026</div>
     <h1>From Trend-Following to Skew Prediction: Empirical Applications of the dLTM Long-Memory Estimator</h1>
     <p class="lead">
-      Empirical tests of whether dLTM regimes carry tradeable information. On a 30-name S&amp;P 500
-      trend portfolio, a leverage-neutral tilt toward high-memory names raises Sharpe at unchanged risk
-      (Diebold-Mariano p = 0.03). Market-wide memory predicts the next month's left tail of a 31-market
-      futures book, and de-risking on it cut maximum drawdown from -27% to -17%. On four optionable
-      underlyings, forward realized skewness is monotone in dLTM regime and survives controls for
-      Bakshi-Kapadia-Madan implied skew.
+      Empirical tests of whether dLTM regimes carry tradeable information. Across S&amp;P 500 stocks on the
+      same date, higher memory predicts more negative forward skewness (t = -4.6, significant in both
+      2011–19 and 2020–25), and a leverage-neutral tilt toward high-memory names raises a trend portfolio's
+      Sharpe at unchanged risk (Diebold-Mariano p = 0.03). On four optionable underlyings, forward realized
+      skewness is monotone in dLTM regime and survives controls for Bakshi-Kapadia-Madan implied skew.
     </p>
     <div class="actions">
       <a class="small-link" href="/papers/dltm_skew_research_note.pdf">PDF</a>
@@ -58,108 +57,58 @@
       presents empirical tests addressing that question.
     </p>
 
-    <h2>Application 1: trend-following with memory-conditioned sizing</h2>
+    <h2>Application 1: memory as an asset-level skew signal in a trend book</h2>
 
-    <h3>Setup</h3>
+    <h3>Cross-sectional evidence</h3>
     <p>
-      A sector-balanced 30-name S&amp;P 500 universe is selected by long history (15+ years) and dLTM coverage (50%+
-      valid estimates), with three names per sector across ten sectors. The base strategy is my final
-      <a href="/projects/carver.html">Carver system</a>: a risk-parity portfolio with long-only trend-strength sizing.
-      An overlay scales each position by the name's current dLTM regime: x1.5 when d &ge; 0.7, x0.5 when d &lt; 0.3,
-      unchanged otherwise. Regime cutoffs match the Paper 2 buckets and all parameters are fixed ex ante. The backtest
-      spans 2000–2025; walk-forward dLTM estimates (2,800-day window) are live from February 2011. Sharpe differentials
-      are tested with Diebold-Mariano on the daily return differential, Newey-West bandwidth 21.
-    </p>
-    <p>
-      High-d name-days outnumber low-d ones roughly eight to one, so the x1.5 / x0.5 overlay is on average a leverage
-      increase (mean multiplier 1.24). To separate the signal from that leverage, I also run a leverage-neutral version:
-      the multipliers are rescaled to average one across names every day, leaving a pure tilt toward high-memory names
-      at unchanged total risk.
-    </p>
-
-    <h3>Results</h3>
-    <table class="results-table">
-      <thead>
-        <tr><th>dLTM-live window, 2011–2025</th><th>Sharpe</th><th>Volatility</th><th>DM stat vs base</th><th>p-value</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Base (final Carver system)</td><td>0.783</td><td>13.2%</td><td>–</td><td>–</td></tr>
-        <tr><td>x1.5 / x0.5 overlay (levered)</td><td>0.794</td><td>17.1%</td><td>+2.95</td><td>0.003</td></tr>
-        <tr><td>Leverage-neutral tilt</td><td>0.809</td><td>13.7%</td><td>+2.13</td><td>0.03</td></tr>
-      </tbody>
-    </table>
-
-    <p class="figure-note">
-      The levered overlay's significant DM statistic is partly leverage: it raises volatility from 13% to 17% for a
-      Sharpe gain of about +0.01. The leverage-neutral tilt adds +0.026 Sharpe at the same risk and remains
-      significant, so the memory signal carries information beyond leverage. The June 2026 version of this note reported
-      lifts of +0.012 (mask: 0.845 to 0.857) and +0.038 (strength: 0.563 to 0.601) for the levered overlay on an
-      earlier trend book; those lifts likewise mixed signal and leverage. The 30-name list here is rebuilt with a fixed
-      rule (three names per sector by dLTM coverage), because the original list was not retained.
-    </p>
-
-    <h3>Regime behaviour</h3>
-    <p>
-      The gains come from sustained trends that began in high-memory states (post-GFC 2011, late-cycle 2019) and the
-      largest cost is the 2022 rate-hike regime, when high memory coincided with stress rather than continuation. Over
-      the full 2000–2025 sample the levered overlay's Sharpe dips slightly (0.816 to 0.805) only because nothing changes
-      before 2011 and its extra leverage gives the weaker post-2011 period more weight; de-levered to the base's
-      volatility it is 0.823, and the leverage-neutral tilt is 0.830.
-    </p>
-
-    <h3>Interpretation</h3>
-    <p>
-      Trend-following is short-skew at the position level, and high-memory regimes coincide with stronger directional
-      persistence. Tilting risk toward high-memory names harvests some of that persistence. The effect is real but
-      small on a risk-adjusted basis; most of the levered overlay's extra return is the price of extra exposure.
-    </p>
-
-    <h3>A note on the inverse direction</h3>
-    <p>
-      In the earlier trend book I separately tested the inverse overlay (high-d to smaller positions), motivated by the
-      intuition that one could hedge the predicted negative skew by reducing exposure. The result was not statistically
-      meaningful (strength: lift +0.08, p = 0.11; mask: lift -0.02, not significant), and maximum drawdown deteriorated
-      in stress regimes (e.g. the COVID crash worsened from -14% to -32%).
-    </p>
-    <p>
-      Shrinking a long equity position is not a tail hedge, since the smaller position is still long the same risk.
-      Negative skew can be harvested as a premium or hedged as a risk, but at the level of a single equity the hedge
-      needs a tail-protective instrument such as long puts, collars, or VIX exposure sized by the regime indicator.
-      At the level of a diversified multi-asset book, the next section shows that a market-wide memory state does work
-      as a de-risking signal.
-    </p>
-
-    <h2>Application 1b: market memory as a tail-risk state for a multi-asset book</h2>
-    <p>
-      Averaging walk-forward d* across about 460 S&amp;P 500 names gives a market memory state. Measured against its own
-      one-year average and bucketed into terciles using only past data, it predicts the next month of my 31-market
-      futures book (the same Carver system, Sharpe 1.04 over 2005–2025).
+      At every month-end from 2011 to 2025, I regress each S&amp;P 500 stock's forward 21-day realized skewness on its
+      walk-forward dLTM estimate on the same date and average the monthly slopes (Fama-MacBeth, Newey-West t-statistics).
+      Because every comparison is within a single month, the calendar era cannot drive the result.
     </p>
 
     <table class="results-table">
       <thead>
-        <tr><th>Market memory state</th><th>Months</th><th>Next-month skewness</th><th>Worst month</th><th>Sharpe</th></tr>
+        <tr><th>Same-date cross-section, 2011–2025</th><th>Average</th><th>t-stat</th><th>Months negative</th></tr>
       </thead>
       <tbody>
-        <tr><td>Low</td><td>55</td><td>-0.43</td><td>-4.4%</td><td>1.82</td></tr>
-        <tr><td>Mid</td><td>53</td><td>-0.73</td><td>-6.9%</td><td>0.67</td></tr>
-        <tr><td>High</td><td>41</td><td>-1.42</td><td>-11.2%</td><td>0.77</td></tr>
+        <tr><td>Slope of forward skew on d*</td><td>-0.124</td><td>-4.58</td><td>64%</td></tr>
+        <tr><td>High-d minus low-d tercile</td><td>-0.046</td><td>-4.14</td><td>64%</td></tr>
+        <tr><td>… 2011–2019 only</td><td>-0.037</td><td>-2.44</td><td></td></tr>
+        <tr><td>… 2020–2025 only</td><td>-0.059</td><td>-3.35</td><td></td></tr>
       </tbody>
     </table>
 
     <p class="figure-note">
-      Daily returns of the futures book in the month after each month-end state, 2013–2025. High memory has the most
-      negative next-month skewness under all three state definitions tested (detrended, expanding terciles, rolling
-      3-year terciles) and with the February–April 2020 COVID window removed. Sharpe is not monotonic across states: the
-      state predicts tail risk, not returns.
+      Higher-memory stocks have more negative forward skewness than lower-memory stocks in the same month, significantly in
+      both halves of the sample. Memory is an asset-level signal: it says which assets carry fat left tails, not when the
+      whole market will.
     </p>
 
+    <h3>Memory tilt in a trend portfolio</h3>
     <p>
-      As a rule, halving the book the day after the state enters its top tercile cut the 2013–2025 maximum drawdown
-      from -26.9% to -16.9% and improved skewness from -0.85 to -0.56, with Sharpe 1.14 to 1.19 (CAGR 13.2% to 11.9%,
-      because the book runs less risk on average). Across the three state definitions the drawdown falls to between
-      -14% and -17%. Evidence covers 2013–2025 and high-memory months cluster in 2014–2020, so this is a promising result
-      rather than a settled one.
+      A sector-balanced 30-name S&amp;P 500 universe is selected by long history (15+ years) and dLTM coverage (50%+ valid
+      estimates), three names per sector across ten sectors. The base is my final
+      <a href="/projects/carver.html">Carver system</a>: a risk-parity portfolio with long-only trend-strength sizing. Each
+      position is scaled x1.5 when the name's d &ge; 0.7 and x0.5 when d &lt; 0.3, then the multipliers are rescaled every
+      day to average one across names, so total risk is unchanged and any gain is the signal rather than leverage.
+      Walk-forward dLTM estimates (2,800-day window) are live from February 2011; the comparison is tested with
+      Diebold-Mariano on the daily return differential, Newey-West bandwidth 21.
+    </p>
+
+    <table class="results-table">
+      <thead>
+        <tr><th>30 S&amp;P 500 stocks, 2011–2025</th><th>Sharpe</th><th>Volatility</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Final Carver system (base)</td><td>0.783</td><td>13.2%</td></tr>
+        <tr><td>Base + memory tilt</td><td>0.809</td><td>13.7%</td></tr>
+      </tbody>
+    </table>
+
+    <p class="figure-note">
+      Diebold-Mariano +2.13, p = 0.03. Trend-following is short-skew at the position level, and high-memory regimes
+      coincide with stronger directional persistence, so tilting toward high-memory names harvests more of the trend
+      premium at the same risk. The 30-name list is rebuilt with a fixed rule (three names per sector by dLTM coverage).
     </p>
 
     <h2>Application 2: skew prediction on optionable underlyings</h2>
@@ -279,19 +228,13 @@
     </p>
 
     <h2>Strategy implications</h2>
-    <p>Taking the applications together, three strategies are potentially viable.</p>
+    <p>Taking the applications together, two strategies are potentially viable.</p>
 
     <p>
-      <strong>(A) Leverage-neutral memory tilt (equity trend book).</strong> Tilt risk toward high-memory
-      names and away from low-memory names at unchanged total risk. A small but significant risk-adjusted
-      gain on a 30-name S&amp;P 500 trend portfolio (Sharpe +0.026, p = 0.03). Suitable as a sizing rule
-      inside an existing trend book; the levered x1.5 / x0.5 version adds return mainly by adding exposure.
-    </p>
-
-    <p>
-      <strong>(A2) Market-memory de-risking switch (multi-asset book).</strong> Cut the book's risk when
-      market-wide memory is high. On a 31-market futures trend book it roughly halved maximum drawdown and
-      improved skewness at equal or better Sharpe (Application 1b).
+      <strong>(A) Leverage-neutral memory tilt (trend book).</strong> Tilt risk toward high-memory assets and
+      away from low-memory assets at unchanged total risk. A small but significant risk-adjusted gain on a
+      30-name S&amp;P 500 trend portfolio (Sharpe +0.026, p = 0.03). Suitable as a sizing rule inside an
+      existing trend book.
     </p>
 
     <p>
