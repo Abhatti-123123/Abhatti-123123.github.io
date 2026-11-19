@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Long Memory and Crash Risk | Angad Bhatti</title>
+  <meta name="description" content="Long memory in prices flags crash risk the options market doesn't price: S&P 500 evidence with volatility controls, placebos and out-of-sample tests.">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="/">Angad<span>Bhatti</span></a>
+    <nav class="links">
+      <a href="/research/">Research</a>
+      <a href="/projects/">Projects</a>
+      <a href="/blog/">Blog</a>
+      <a href="/cv/">CV</a>
+      <a href="mailto:ab130@fordham.edu">Contact</a>
+    </nav>
+  </div>
+</header>
+
+
+<main class="container article-layout">
+  <section class="page-title">
+    <div class="kicker">Research · Working Paper · November 2026</div>
+    <h1>Long Memory and Crash Risk</h1>
+    <p class="lead">Long memory in prices flags crash risk the options market doesn't price.</p>
+  </section>
+  <article class="article">
+    <div class="actions">
+      <a class="small-link" href="/papers/long_memory_crash_risk.pdf">Paper (PDF) →</a>
+      <a class="small-link" href="/papers/long_memory_crash_risk_slides.pdf">Slides (PDF) →</a>
+    </div>
+
+    <h2>Abstract</h2>
+    <p>
+      Long memory in prices, measured with the finite-sample detectability estimator of
+      <a href="/research/detectability-boundaries.html">Bhatti (2026a)</a>, identifies when equity crash risk is elevated. On the
+      S&amp;P 500 from 2006 to 2026, a state defined by high intraday memory together with price stress makes a 3% daily loss
+      4.4 times as likely on the next day. Within stressed markets, high memory still separates the dangerous days. Volatility
+      explains part of the raw effect, but with realized volatility and the VIX controlled, high memory inside stress still
+      multiplies the odds of a 3% loss within 15 days by 2.5 (4.4 out of sample), and the direction holds when the bar grid is
+      shifted or memory is read earlier in the day. At the 36-day horizon, memory flags when a decline, once under way, is
+      likely to persist. The risk is only partly priced: in the state, at-the-money implied volatility rises but put skew does
+      not. Used to cut a portfolio of risk premia, the signal reduced out-of-sample maximum drawdown from 16.7% to 13.8% and
+      beat every constant hedge.
+    </p>
+
+    <h2>Where it sits</h2>
+    <p>
+      This is the third paper in a series. <a href="/research/detectability-boundaries.html">Paper 1</a> develops the memory
+      estimator; <a href="/research/over-differencing.html">Paper 2</a> shows memory regimes structure return forecastability;
+      this paper asks what memory regimes imply for tail risk.
+    </p>
+
+    <h2>Key results</h2>
+    <table class="results-table">
+      <thead><tr><th>S&amp;P 500, 2006–2026</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>3% down day the next day, memory + stress state vs other days</td><td>2.9% vs 0.7% (4.4×), placebo p ≤ 0.001</td></tr>
+        <tr><td>Inside stress, memory high vs low: 10%+ fall within 15 days</td><td>7.6% vs 2.2%, placebo p = 0.032</td></tr>
+        <tr><td>Inside stress, with realized volatility and VIX controlled: odds of a 3% loss within 15 days</td><td>2.5× (z 2.7); 4.4× out of sample</td></tr>
+        <tr><td>Out-of-sample shock days caught</td><td>88% while on 41% of days</td></tr>
+        <tr><td>Options in the state</td><td>ATM implied vol +3 points; put skew flat; worst day 0.4 sd worse than implied</td></tr>
+        <tr><td>Fund drawdown, out of sample (no hedge → memory hedge)</td><td>-16.7% → -13.8%; return per unit of drawdown 2.43 → 2.91</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Method in brief</h2>
+    <p>
+      Memory is the S&amp;P 500's own d* on its last 2,789 five-minute bars of regular US hours, re-estimated after each close.
+      The state is on when memory is in the top third of its trailing year and price shows stress (below the 50-day mean, or
+      21-day volatility above 63-day volatility), and is held for 15 trading days. Every test is compared with 2,000 circular
+      shifts of the state's dates; rules were fixed on 2004–2015 and run once on 2016–2026. The paper also reports where the
+      signal fails: developed Europe and Switzerland, where the available stress signals are policy-driven trends rather than
+      fear signals.
+    </p>
+
+    <div class="actions">
+      <a class="small-link" href="/research/">Back to research</a>
+      <a class="small-link" href="/projects/carver.html">The portfolio it hedges</a>
+    </div>
+  </article>
+</main>
+
+
+<footer class="footer">
+  <div class="container">
+    <p>© 2026 Angad Bhatti. Research website hosted on GitHub Pages.</p>
+  </div>
+</footer>
+
+</body>
+</html>
