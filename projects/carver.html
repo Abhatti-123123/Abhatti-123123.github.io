@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Systematic Futures Portfolio Construction | Angad Bhatti</title>
-  <meta name="description" content="Carver-style systematic futures portfolio construction, volatility targeting, risk parity, trend overlays, and risk diagnostics.">
+  <meta name="description" content="Two-book systematic fund: risk parity and trend-strength sizing on 27 futures, plus a risk-premia sleeve hedged by a long-memory regime signal.">
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
@@ -28,8 +28,10 @@
       <div class="kicker">Systematic Futures · Risk Management · Trend Following</div>
       <h1>Systematic Futures Portfolio Construction</h1>
       <p class="lead">
-        A Carver-style system on 31 futures (2005–2025): volatility targeting, risk parity, covariance estimation,
-        long-only trend-strength sizing, and drawdown-aware evaluation. Sharpe 1.04 over twenty years, 1.48 since 2020.
+        A two-book systematic fund (2005–2026): risk parity with long-only trend-strength sizing on 27 futures, plus a
+        risk-premia sleeve hedged by my long-memory estimator. Trend Sharpe 1.11 (1.14 out of sample); out of sample
+        the memory hedge lifted the fund's return per unit of drawdown from 2.43 to 2.91 and cut its worst drawdown
+        from -16.7% to -13.8%.
       </p>
     </div>
   </section>
@@ -149,55 +151,105 @@ contract leverage ratio = notional exposure per contract / capital</code></pre>
           <li>Initial weights or no-trade warmup periods are important before lookback windows are populated, otherwise early trades can be oversized.</li>
         </ul>
 
-        <h2>Backtest results</h2>
+        <h2>From one book to two</h2>
         <p>
-          The final system runs on 31 liquid futures across six asset classes (equity indices, rates, energy, metals,
-          grains and softs, livestock) from 2005 to mid-2025, after a cost of 5 bp per unit of position change. Settings
-          were chosen on 2005–2016 only; 2017–2025 is the out-of-sample check.
+          The final system holds two books at equal risk, scaled together to 10% volatility, from 2005 to November 2026,
+          after a 5 bp cost on every position change. All settings were fixed on 2005–2015; 2016–2026 was run once as
+          the out-of-sample check.
         </p>
+        <ul>
+          <li><strong>Book 1, trend:</strong> risk parity on 27 futures in five classes, with long-only trend-strength sizing. Energy was dropped: it carries no holding premium.</li>
+          <li><strong>Book 2, risk premia:</strong> 30 S&amp;P 500 stocks, the US index futures and broad equity and credit ETFs, held by risk parity and hedged by a long-memory regime signal.</li>
+        </ul>
 
+        <h2>Book 1: what each layer contributes</h2>
         <table class="results-table">
           <thead>
-            <tr><th>Final system</th><th>Sharpe</th><th>CAGR</th><th>Volatility</th><th>Max Drawdown</th></tr>
+            <tr><th>Strategy</th><th>Measured as</th><th>Sharpe</th><th>Out of sample 2016–26</th><th>CAGR</th><th>Volatility</th><th>Max Drawdown</th></tr>
           </thead>
           <tbody>
-            <tr><td>2005–2025</td><td>1.04</td><td>11.8%</td><td>11.3%</td><td>-26.9%</td></tr>
-            <tr><td>In-sample 2005–2016</td><td>0.89</td><td>9.4%</td><td>10.7%</td><td>-20.3%</td></tr>
-            <tr><td>Out-of-sample 2017–2025</td><td>1.23</td><td>15.2%</td><td>12.1%</td><td>-26.9%</td></tr>
-            <tr><td>Since 2020</td><td>1.48</td><td>19.8%</td><td>12.7%</td><td>-13.0%</td></tr>
-          </tbody>
-        </table>
-
-        <h2>What each layer contributes</h2>
-        <table class="results-table">
-          <thead>
-            <tr><th>Strategy</th><th>Measured as</th><th>Sharpe</th><th>Max Drawdown</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>S1 Buy &amp; hold</td><td>average single market</td><td>0.30</td><td>-62%</td></tr>
-            <tr><td>S2 Constant vol target</td><td>average single market</td><td>0.29</td><td>-63%</td></tr>
-            <tr><td>S3 Variable vol target</td><td>average single market</td><td>0.23</td><td>-68%</td></tr>
-            <tr><td>S4 Portfolio risk parity</td><td>portfolio</td><td>0.73</td><td>-49.5%</td></tr>
-            <tr><td>S6/7 S4 + trend-strength sizing</td><td>portfolio (final)</td><td>1.04</td><td>-26.9%</td></tr>
+            <tr><td>Buy &amp; hold</td><td>average single market</td><td>0.32</td><td>0.30</td><td>4.5%</td><td>22.1%</td><td>-60%</td></tr>
+            <tr><td>Equal-weight buy &amp; hold</td><td>portfolio, same volatility</td><td>0.76</td><td>0.86</td><td>8.2%</td><td>11.2%</td><td>-36.7%</td></tr>
+            <tr><td>Portfolio risk parity</td><td>portfolio, same volatility</td><td>0.80</td><td>0.80</td><td>8.7%</td><td>11.2%</td><td>-28.1%</td></tr>
+            <tr><td>Risk parity + trend-strength sizing</td><td>portfolio (final)</td><td>1.11</td><td>1.14</td><td>12.6%</td><td>11.2%</td><td>-22.6%</td></tr>
           </tbody>
         </table>
         <p>
-          A single market earns a Sharpe ratio of about 0.3 however it is sized; combining the same markets with
-          correlation-aware sizing more than doubles it. Sizing each long by the strength of its trend then lifts the
-          book to 1.04 and halves the drawdown: risk goes to markets that are trending, and a position fades towards
-          zero as its trend dies, so the book steps out of falling markets without ever shorting them (2008: +3.6%).
+          A single market earns a Sharpe ratio of about 0.3. Holding all 27 equally lifts it to 0.76; correlation-aware
+          risk parity then cuts the worst drawdown from -37% to -28% at the same volatility. Sizing each long by the
+          strength of its trend lifts Sharpe to 1.11: risk goes to markets that are trending, and a position fades
+          towards zero as its trend dies, so the book steps out of falling markets without ever shorting them.
         </p>
 
         <h2>Does trend sizing add value?</h2>
         <p>
-          Regressing monthly returns of the final system on the risk-scaled portfolio it is built on (HAC standard
-          errors) gives an alpha of 0.44% a month, t = 3.13, with beta 0.45; since 2020 the alpha is 0.57% a month,
-          t = 3.00. A binary trend mask, by contrast, was statistically indistinguishable from the plain portfolio, and
-          letting the same signal go short lowered Sharpe in every test. Trend works here as a way to size longs, not
-          as a reason to short.
+          Regressing monthly returns of the trend book on the risk-parity portfolio at the same volatility (HAC
+          standard errors) gives an alpha of 0.46% a month, t = 3.24, beta 0.78: about 6% a year. Out of sample
+          (2016–2026) the alpha is 0.44% a month, t = 2.73. A binary trend mask, by contrast, was statistically
+          indistinguishable from the plain portfolio, and letting the same signal go short lowered Sharpe in every test.
+          Trend works here as a way to size longs, not as a reason to short.
         </p>
 
-        <h2>Volatility target is a leverage dial</h2>
+        <h2>Regime behavior: why a second book</h2>
+        <table class="results-table">
+          <thead><tr><th>Episode</th><th>Trend book return</th></tr></thead>
+          <tbody>
+            <tr><td>GFC (2008 to March 2009)</td><td>+3.1%</td></tr>
+            <tr><td>Euro crisis (H2 2011)</td><td>-5.0%</td></tr>
+            <tr><td>Commodity bust (July 2014 to February 2016)</td><td>-5.1%</td></tr>
+            <tr><td>COVID crash (February to April 2020)</td><td>-9.6%</td></tr>
+            <tr><td>Reflation (2021)</td><td>+27.7%</td></tr>
+            <tr><td>Rate hikes (2022)</td><td>+11.1%</td></tr>
+          </tbody>
+        </table>
+        <p>
+          The trend book steps aside in slow bear markets (2008: +4.4% while the S&amp;P 500 fell 37%), but sudden
+          crashes hit before a slow trend signal can react. That gap is what Book 2 is for: it holds assets that pay a
+          premium for bearing risk, and cuts them when the risk is likely to persist.
+        </p>
+
+        <h2>Book 2: long memory as a hedge timer</h2>
+        <p>
+          My <a href="/research/detectability-boundaries.html">long-memory estimator</a> measures how persistent each
+          asset's moves are, here on 5-minute intraday bars and re-estimated daily. Memory is a state that moves with the
+          macro regime: it falls in crises and rebuilds in calm, trending markets. In Book 2 it is used only for timing:
+          when an asset's price shows stress and its own memory says the move is likely to persist, its position is cut
+          for a short period.
+        </p>
+        <table class="results-table">
+          <thead><tr><th>2006–Nov 2026, 10% vol, after T-bills</th><th>Sharpe</th><th>Max Drawdown</th><th>CAGR ÷ avg drawdown</th></tr></thead>
+          <tbody>
+            <tr><td>Book 2, no hedge</td><td>0.71</td><td>-20.6%</td><td>1.70</td></tr>
+            <tr><td>Book 2, memory hedge</td><td>0.73</td><td>-15.1%</td><td>1.95</td></tr>
+            <tr><td>Book 1 (trend) alone</td><td>1.09</td><td>-20.0%</td><td>1.57</td></tr>
+            <tr><td>Fund, both books, no hedge</td><td>0.99</td><td>-17.4%</td><td>1.92</td></tr>
+            <tr><td>Fund, both books, memory hedge</td><td>1.02</td><td>-14.3%</td><td>2.30</td></tr>
+          </tbody>
+        </table>
+        <table class="results-table">
+          <thead><tr><th>Fund, out of sample 2016–Nov 2026</th><th>Sharpe</th><th>Max Drawdown</th><th>CAGR ÷ avg drawdown</th></tr></thead>
+          <tbody>
+            <tr><td>No hedge</td><td>1.03</td><td>-16.7%</td><td>2.43</td></tr>
+            <tr><td>Price stress alone (Book 2 hedged 74% of the time)</td><td>1.00</td><td>-15.5%</td><td>2.50</td></tr>
+            <tr><td>Memory + stress (Book 2 hedged 41% of the time)</td><td>1.06</td><td>-13.8%</td><td>2.91</td></tr>
+          </tbody>
+        </table>
+        <p>
+          The gain is in drawdowns, not returns: Sharpe moves only from 0.99 to 1.02 over the full period, while the
+          worst drawdown falls by a fifth. Price stress alone hedges three days in four; memory picks the stressed days
+          that carry the risk, hedging half as often with shallower drawdowns.
+        </p>
+
+        <h2>Is it timing or just hedging?</h2>
+        <p>Three checks separate timing from simply holding less risk:</p>
+        <ul>
+          <li><strong>Against every constant hedge.</strong> A short S&amp;P hedge on Book 2 held every day, from 0% to 60% of its beta: out of sample no constant hedge beats no hedge (2.43), while the memory hedge reaches 2.91. In sample the best constant (2.54) beats the memory hedge (2.18), but the best constant is only known in hindsight; the memory rule was fixed in advance.</li>
+          <li><strong>Placebo.</strong> The hedge's dates were circularly shifted 2,000 times, keeping its spells and share of days. In the real hedge state a 3% S&amp;P down day is 4&times; as likely the next day (p &lt; 0.001), and the hedge was on for 88% of 2016–2026 shock days (p &lt; 0.001).</li>
+          <li><strong>Memory inside stress.</strong> On days when price stress alone would hedge, high memory still separates the dangerous ones: a 3% down day the next day is 3.8&times; as likely (p = 0.004), and a 10%+ fall within the next three weeks happens 7.6% of the time vs 2.2% (p = 0.032).</li>
+        </ul>
+
+        <h2>Earlier version: lessons that still hold</h2>
+        <p>From the earlier 31-market, single-book version (2005–2025):</p>
         <table class="results-table">
           <thead>
             <tr><th>Volatility Target</th><th>CAGR</th><th>Volatility</th><th>Sharpe</th><th>Max Drawdown</th></tr>
@@ -210,11 +262,8 @@ contract leverage ratio = notional exposure per contract / capital</code></pre>
         </table>
         <p>
           Sharpe is identical at every target: return and drawdown scale together. Sharpe is the quantity to improve;
-          the target is chosen afterwards. Realised volatility sits near half the target because trend sizing holds
-          less than full risk most of the time.
+          the target is chosen afterwards.
         </p>
-
-        <h2>More markets only help when they bring an edge</h2>
         <table class="results-table">
           <thead>
             <tr><th>Universe</th><th>Effective bets</th><th>Average correlation</th><th>Sharpe</th></tr>
@@ -227,64 +276,19 @@ contract leverage ratio = notional exposure per contract / capital</code></pre>
           </tbody>
         </table>
         <p>
-          Going from 21 to 31 markets added real diversification. Past about 30 markets, more assets added nothing:
-          bonds and currencies lower correlation but carry no edge for a long-biased trend book, and extra commodities
-          are partly near-copies of markets already held. Diversification multiplies an edge; it cannot create one.
-        </p>
-
-        <h2>Regime behavior</h2>
-        <p>
-          The book steps aside in slow bear markets but is caught by sudden crashes: in 2008 it returned
-          +3.6% while the S&amp;P 500 fell 37%, whereas the COVID crash cost 9.5% before the slow trend signal could react.
-          Inflationary and reflationary regimes paid most (2021: +40%, 2022: +18.5%). The worst drawdown, January 2018
-          to March 2020, was a choppy period followed by COVID.
-        </p>
-
-        <h2>Long memory as an asset-level skew signal</h2>
-        <p>
-          Linking this to my long-memory research: across S&amp;P 500 stocks, on the same date, higher walk-forward
-          <a href="/research/dltm_skew_regimes.html">d<sub>LTM</sub></a> means more negative next-month skewness
-          (Fama-MacBeth slope t = -4.6, significant in both 2011–2019 and 2020–2025), so the effect is not an artefact of
-          one period. Memory says which assets carry fat left tails. Used that way, a leverage-neutral tilt toward
-          high-memory names raises the final system's Sharpe on a 30-stock universe from 0.783 to 0.809 at the same
-          volatility (Diebold-Mariano p = 0.03).
-        </p>
-
-        <h2>Return distribution diagnostics</h2>
-        <table class="results-table">
-          <thead>
-            <tr><th>Statistic</th><th>Value</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Mean / median daily return</td><td>0.047% / 0.049%</td></tr>
-            <tr><td>Daily volatility</td><td>0.71%</td></tr>
-            <tr><td>Skewness</td><td>-0.70</td></tr>
-            <tr><td>Excess kurtosis</td><td>6.02</td></tr>
-            <tr><td>Min / Max daily return</td><td>-7.7% / +4.1%</td></tr>
-            <tr><td>VaR95 / VaR99</td><td>-1.08% / -2.14%</td></tr>
-            <tr><td>CVaR95 / CVaR99</td><td>-1.74% / -2.87%</td></tr>
-            <tr><td>Annualized Sortino</td><td>1.30</td></tr>
-            <tr><td>Tail ratio (95th / 5th percentile)</td><td>1.11</td></tr>
-            <tr><td>Hit rate</td><td>55.1%</td></tr>
-            <tr><td>Profit factor</td><td>1.21</td></tr>
-            <tr><td>ACF(1)</td><td>0.069, weak positive serial correlation</td></tr>
-          </tbody>
-        </table>
-
-        <h2>Robustness on crypto</h2>
-        <p>
-          The risk-scaled portfolio (S4), with its futures parameters unchanged, run on 12 liquid spot coins from January
-          2023 to November 2025, returned a Sharpe ratio of 1.04 with a maximum drawdown of -21.4%. The sample is under
-          three years, so this is evidence that the risk machinery transfers, not a track record. An earlier version of
+          Past about 30 markets, more assets added nothing: bonds and currencies lower correlation but carry no edge
+          for a long-biased trend book, and extra commodities are partly near-copies of markets already held.
+          Diversification multiplies an edge; it cannot create one. The same risk machinery, with its futures
+          parameters unchanged, ran on 12 liquid spot coins (January 2023 to November 2025) at a Sharpe ratio of 1.04;
           the crypto study is written up <a href="/projects/carver-crypto.html">here</a>.
         </p>
 
         <h2>Limitations</h2>
         <ul>
-          <li>Yahoo Finance front-month series; contract-roll days are neutralised from an exchange roll calendar, an approximation of true back-adjustment.</li>
+          <li>Futures from Yahoo Finance front-month series, with roll days neutralised from an exchange roll calendar; stocks, ETFs and 1-minute data from paid vendors (Norgate, EODHD).</li>
           <li>A flat 5 bp cost on every market, with no slippage or capacity model.</li>
-          <li>Only markets Yahoo still lists back to 2005, and the 31-market universe was chosen after comparing others.</li>
-          <li>Long-biased: sudden gap-down crashes hit before slow trend signals react.</li>
+          <li>Book 2's stocks are today's S&amp;P 500 members; hedged and unhedged books hold the same stocks, so the hedge comparison is unaffected.</li>
+          <li>The hedge does not call the exact start of a crash that comes out of a calm market (the 2025 tariff fall).</li>
         </ul>
 
         <h2>Strategy selection lessons</h2>
@@ -303,10 +307,10 @@ contract leverage ratio = notional exposure per contract / capital</code></pre>
         <h2>Recommendations</h2>
         <ul>
           <li>Size longs by trend strength rather than filtering by trend direction, and do not short on the same signal.</li>
-          <li>Add markets that bring their own edge; past about 30 markets, more assets added no profit.</li>
+          <li>Keep only markets with an economic reason to be held: energy left the trend book for lack of a holding premium.</li>
           <li>Choose the volatility target after optimizing Sharpe: Sharpe was unchanged across targets while drawdowns scaled.</li>
           <li>Smooth the portfolio leverage factor and blend covariance horizons to avoid cutting risk at the bottom of a shock.</li>
-          <li>Tilt risk toward high-memory assets at unchanged total risk: memory flags which assets carry fat left tails.</li>
+          <li>Use long memory to time protection: cutting risk premia when memory confirms price stress lifted return per unit of drawdown out of sample while hedging half as often as stress alone.</li>
           <li>Delay trading or preserve initial weights until lookback windows are properly populated.</li>
         </ul>
 
