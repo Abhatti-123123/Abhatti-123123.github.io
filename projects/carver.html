@@ -213,7 +213,8 @@ contract leverage ratio = notional exposure per contract / capital</code></pre>
           My <a href="/research/detectability-boundaries.html">long-memory estimator</a> measures how persistent each
           asset's moves are, here on 5-minute intraday bars and re-estimated daily. Memory is a state that moves with the
           macro regime: it falls in crises and rebuilds in calm, trending markets. In Book 2 it is used only for timing:
-          when an asset's price shows stress and its own memory says the move is likely to persist, its position is cut.
+          when an asset's price shows stress and its own memory says the move is likely to persist, its position is cut. Why this works, with volatility controls, placebos and out-of-sample tests:
+          <a href="/research/long-memory-crash-risk.html">Long Memory and Crash Risk</a>.
         </p>
         <p><strong>The rule.</strong> Each asset's memory is estimated on its last 2,789 five-minute bars (about 36 trading
           days of regular US hours), re-estimated every day. The hedge switches on for an asset when, as of the previous
