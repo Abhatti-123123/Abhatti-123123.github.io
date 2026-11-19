@@ -213,9 +213,27 @@ contract leverage ratio = notional exposure per contract / capital</code></pre>
           My <a href="/research/detectability-boundaries.html">long-memory estimator</a> measures how persistent each
           asset's moves are, here on 5-minute intraday bars and re-estimated daily. Memory is a state that moves with the
           macro regime: it falls in crises and rebuilds in calm, trending markets. In Book 2 it is used only for timing:
-          when an asset's price shows stress and its own memory says the move is likely to persist, its position is cut
-          for a short period.
+          when an asset's price shows stress and its own memory says the move is likely to persist, its position is cut.
         </p>
+        <p><strong>The rule.</strong> Each asset's memory is estimated on its last 2,789 five-minute bars (about 36 trading
+          days of regular US hours), re-estimated every day. The hedge switches on for an asset when, as of the previous
+          close, both hold:</p>
+        <ul>
+          <li><strong>Memory is high:</strong> the asset's memory is in the top third of its own trailing 252 days.</li>
+          <li><strong>Price shows stress</strong>, defined by how each class sells off.</li>
+        </ul>
+        <p>Once on, the position is cut by 50% and held there for 15 trading days. Index futures (ES, NQ, YM) follow the
+          S&amp;P 500's state; every other asset follows its own.</p>
+        <table class="results-table">
+          <thead><tr><th>Class</th><th>Members</th><th>Stress that confirms the hedge</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>US equities</td><td>30 S&amp;P 500 stocks, SPY, IWM, IJH, ES/NQ/YM</td><td>Price below its 50-day mean, or 21-day volatility above 63-day volatility</td><td>Slow grinds show in the trend, sudden shocks in volatility</td></tr>
+            <tr><td>High yield</td><td>HYG, JNK</td><td>21-day volatility above 63-day volatility</td><td>Spread shocks show up as volatility; the 50-day trend mostly tracks interest rates</td></tr>
+          </tbody>
+        </table>
+        <p>Outside the fund, the same memory rule held up on Japan out of sample (EWJ and Nikkei futures), with stress
+          defined as the yen above its 50-day mean: the yen is a safe haven that rises in sell-offs and hits Japan's
+          exporters. Stress definitions were chosen on 2004–2015 data only.</p>
         <table class="results-table">
           <thead><tr><th>2006–Nov 2026, 10% vol, after T-bills</th><th>Sharpe</th><th>Max Drawdown</th><th>CAGR ÷ avg drawdown</th></tr></thead>
           <tbody>
@@ -245,7 +263,7 @@ contract leverage ratio = notional exposure per contract / capital</code></pre>
         <ul>
           <li><strong>Against every constant hedge.</strong> A short S&amp;P hedge on Book 2 held every day, from 0% to 60% of its beta: out of sample no constant hedge beats no hedge (2.43), while the memory hedge reaches 2.91. In sample the best constant (2.54) beats the memory hedge (2.18), but the best constant is only known in hindsight; the memory rule was fixed in advance.</li>
           <li><strong>Placebo.</strong> The hedge's dates were circularly shifted 2,000 times, keeping its spells and share of days. In the real hedge state a 3% S&amp;P down day is 4&times; as likely the next day (p &lt; 0.001), and the hedge was on for 88% of 2016–2026 shock days (p &lt; 0.001).</li>
-          <li><strong>Memory inside stress.</strong> On days when price stress alone would hedge, high memory still separates the dangerous ones: a 3% down day the next day is 3.8&times; as likely (p = 0.004), and a 10%+ fall within the next three weeks happens 7.6% of the time vs 2.2% (p = 0.032).</li>
+          <li><strong>Memory inside stress.</strong> On days when price stress alone would hedge, high memory still separates the dangerous ones: a 3% down day the next day is 3.8&times; as likely (p = 0.004), and a 10%+ fall within the 15-day hold happens 7.6% of the time vs 2.2% (p = 0.032).</li>
         </ul>
 
         <h2>Earlier version: lessons that still hold</h2>
