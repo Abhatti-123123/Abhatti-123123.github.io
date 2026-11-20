@@ -236,5 +236,14 @@
 
 
 
+<!-- GoatCounter: visits + PDF opens -->
+<script>
+document.addEventListener('click', function (e) {
+  var a = e.target.closest && e.target.closest('a[href$=".pdf"]');
+  if (!a || !window.goatcounter || !window.goatcounter.count) return;
+  window.goatcounter.count({ path: 'pdf: ' + a.getAttribute('href').split('/').pop(), title: a.textContent.trim().slice(0, 80), event: true });
+});
+</script>
+<script data-goatcounter="https://abhatti-123123.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
